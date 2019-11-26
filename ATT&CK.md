@@ -1,4 +1,4 @@
-# **MIRTE ATT&CK Enterprise FrameWork**
+# **MITRE ATT&CK Enterprise FrameWork**
 
 > by HTTP 418 I'm a teapot @ Nsfocus
 
@@ -6,7 +6,7 @@
 
 <!-- TOC -->
 
-- [**MIRTE ATT&CK Enterprise FrameWork**](#mirte-attck-enterprise-framework)
+- [**MITRE ATT&CK Enterprise FrameWork**](#mirte-attck-enterprise-framework)
   - [Perface](#perface)
   - [Initial Access (初始访问)](#initial-access-%e5%88%9d%e5%a7%8b%e8%ae%bf%e9%97%ae)
     - [Drive-by Compromise](#drive-by-compromise)
@@ -38,7 +38,7 @@
 
 ## Perface
 
-基于**MIRTE ATT&CK模型**整理的文档式中译版。
+基于**MITRE ATT&CK模型**整理的文档式中译版。
 
 同时建议针对**关键词语**采用双语对照，可以参照[**Initial Access**](#initial-access)。
 
