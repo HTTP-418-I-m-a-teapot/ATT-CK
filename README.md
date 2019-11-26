@@ -1,2 +1,2 @@
-# ATT-CK
+# ATT&CK
 MIRTE ATT&amp;CK
