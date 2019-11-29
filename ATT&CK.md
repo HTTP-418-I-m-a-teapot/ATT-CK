@@ -85,9 +85,26 @@
 ## Defense Evasion(防御规避)
 
 ### Access Token Manipulation(访问令牌操纵)(Windows)
-(同Privilege Escalation)
+内容同Privilege Escalation
+官方链接：https://attack.mitre.org/techniques/T1134/
 
-### Binary Padding
+### Binary Padding(二进制填充)
+#### 概述
++ 在不影响恶意软件功能和行为的前提下，使用二进制填充添加脏数据(junk data)并更改其在磁盘上的表现形式。
++ 填充部分通常由制造脏数据的函数生成，附加在末尾或恶意程序各个部分
+
+#### 表现
++ 改变了文件散列，用以绕过基于哈希(hash-based)的工具的检测/防御机制
++ 改变了文件大小，用以绕过不为大文件提供检测服务工具的机制（如VirusTotal），并减少了文件被收集分析的可能性
+
+#### 检测
++ 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)
+
+#### 缓解
++ 基于系统特性的恶意使用，无法通过预防性控制简单缓解
+
+#### 原文链接
+https://attack.mitre.org/techniques/T1009/
 
 ### BITS Jobs
 
