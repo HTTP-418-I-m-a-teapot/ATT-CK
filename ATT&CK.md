@@ -272,7 +272,7 @@
 
 ***
 
-## Discovery (嗅探/发现)
+## Discovery (嗅探扫描)
 
 ### Account Discovery
 
@@ -322,7 +322,47 @@
 
 ***
 
-## Lateral Movement
+## Lateral Movement(横向移动）
+
+### AppleScript
+
+### Application Access Token
+
+### Application Deployment Software
+
+### Component Object Model and Distributed COM
+
+### Exploitation of Remote Services
+
+### Internal Spearphishing
+
+### Logon Scripts
+
+### Pass the Hash
+
+### Pass the Ticket
+
+### Remote Desktop Protocol
+
+### Remote File Copy
+
+### Remote Services
+
+### Replication Through Removable Media
+
+### Shared Webroot
+
+### SSH Hijacking
+
+### Taint Shared Content
+
+### Third-party Software
+
+### Web Session Cookie
+
+### Windows Admin Shares
+
+### Windows Remote Management
 
 ***
 
