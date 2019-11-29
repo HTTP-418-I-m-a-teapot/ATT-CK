@@ -84,7 +84,8 @@
 
 ## Defense Evasion(防御规避)
 
-### Access Token Manipulation
+### Access Token Manipulation(访问令牌操纵)(Windows)
+(同Privilege Escalation)
 
 ### Binary Padding
 
