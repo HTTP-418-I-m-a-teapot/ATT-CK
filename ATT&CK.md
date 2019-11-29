@@ -88,25 +88,45 @@
 内容同Privilege Escalation
 官方链接：https://attack.mitre.org/techniques/T1134/
 
-### Binary Padding(二进制填充)
-#### 概述
-+ 在不影响恶意软件功能和行为的前提下，使用二进制填充添加脏数据(junk data)并更改其在磁盘上的表现形式。
+### Binary Padding(二进制填充)(all)
+#### 背景
++ 在不影响恶意软件功能和行为的前提下，使用二进制填充添加脏数据(junk data)并更改其在磁盘上的表现形式
 + 填充部分通常由制造脏数据的函数生成，附加在末尾或恶意程序各个部分
 
-#### 表现
-+ 改变了文件散列，用以绕过基于哈希(hash-based)的工具的检测/防御机制
-+ 改变了文件大小，用以绕过不为大文件提供检测服务工具的机制（如VirusTotal），并减少了文件被收集分析的可能性
+#### 利用
++ 改变文件散列，用以绕过基于哈希(hash-based)的工具的检测/防御机制
++ 改变文件大小，用以绕过不为大文件提供检测服务工具的机制（如VirusTotal），并减少了文件被收集分析的可能性
 
 #### 检测
-+ 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)
++ 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术
 
 #### 缓解
-+ 基于系统特性的恶意使用，无法通过预防性控制简单缓解
++ 属于基于系统特性的恶意使用，无法通过预防性控制简单缓解
 
 #### 原文链接
 https://attack.mitre.org/techniques/T1009/
 
-### BITS Jobs
+### BITS Jobs(BITS(Windows后台智能传输服务)利用)(Windows)
+#### 背景
++ Windows后台智能传输服务（BITS）是一种通过组件对象模型（COM）公开的一种低带宽异步文件传输机制，通常由更新程序、messengers服务和其他使用空闲带宽，并在后台运行而不中断其他联网应用的程序使用
++ Microsoft提供了一个名为“ bitsadmin ” 的二进制文件和PowerShell cmdlet，用于创建和管理文件传输
+
+#### 利用
++ 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
++ 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
+一个案例：https://www.cnblogs.com/xiaozi/p/11833583.html
++ 使用BITS上传功能进行 Exfiltration Over Alternative Protocol （基于替代协议的渗透）
+
+#### 检测
++ 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术
+
+#### 缓解
++ 流量过滤：修改安全设备策略，仅允许合法的BITS通信
++ 系统配置：减少“组策略”中的默认BITS作业生存期，或通过编辑注册表HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS缩短 JobInactivityTimeout和MaxDownloadTime的值
++ 访问控制：将BITS界面的访问权限限制为特定的用户或组
+
+#### 原文链接
+https://attack.mitre.org/techniques/T1197/
 
 ### Bypass User Account Control
 
