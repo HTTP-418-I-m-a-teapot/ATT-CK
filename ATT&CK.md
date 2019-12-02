@@ -283,9 +283,16 @@
 ## Defense Evasion (防御规避)
 
 ### Access Token Manipulation (访问令牌操纵) (Windows)
+<<<<<<< HEAD
 
 内容同Privilege Escalation
 [官方链接](https://attack.mitre.org/techniques/T1134/)
+=======
+#### 内容同Privilege Escalation
+
+#### 0x04 原文链接
+https://attack.mitre.org/techniques/T1134/
+>>>>>>> da02016b3a4c37a5f0044fc63de729206349a90b
 
 ### Binary Padding (二进制填充) (all)
 
@@ -312,6 +319,7 @@
 
 [https://attack.mitre.org/techniques/T1009/](https://attack.mitre.org/techniques/T1009/)
 
+<<<<<<< HEAD
 ### BITS Jobs(BITS(Windows后台智能传输服务)利用)(Windows)
 
 #### 背景
@@ -324,10 +332,24 @@
 - 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
 - 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
 
+=======
+### BITS Jobs (BITS(Windows后台智能传输服务)利用) (Windows)
+
+#### 0x00 背景
+
++ Windows后台智能传输服务（BITS）是一种通过组件对象模型（COM）公开的一种低带宽异步文件传输机制，通常由更新程序、messengers服务和其他使用空闲带宽，并在后台运行而不中断其他联网应用的程序使用
++ Microsoft提供了一个名为“ bitsadmin ” 的二进制文件和PowerShell cmdlet，用于创建和管理文件传输
+
+#### 0x01 利用
+
++ 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
++ 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
+>>>>>>> da02016b3a4c37a5f0044fc63de729206349a90b
 一个案例：https://www.cnblogs.com/xiaozi/p/11833583.html
 
 - 使用BITS上传功能进行 Exfiltration Over Alternative Protocol （基于替代协议的渗透）
 
+<<<<<<< HEAD
 #### 检测
 
 - 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术
@@ -339,15 +361,82 @@
 - 访问控制：将BITS界面的访问权限限制为特定的用户或组
 
 #### 原文链接
+=======
+#### 0x02 检测
+
++ 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术
+
+#### 0x03 缓解
+
++ 流量过滤：修改安全设备策略，仅允许合法的BITS通信
++ 系统配置：减少“组策略”中的默认BITS作业生存期，或通过编辑注册表HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS缩短 JobInactivityTimeout和MaxDownloadTime的值
++ 访问控制：将BITS界面的访问权限限制为特定的用户或组
+
+#### 0x04 原文链接
+>>>>>>> da02016b3a4c37a5f0044fc63de729206349a90b
 
 https://attack.mitre.org/techniques/T1197/
 
-### Bypass User Account Control
+### Bypass User Account Control (UAC(用户账户控制)绕过) (Windows)
+#### 内容同Privilege Escalation
+
+#### 0x04 原文链接
+
+https://attack.mitre.org/techniques/T1088/
 
 ### Clear Command History
 
+#### 0x00 背景
+
++ 
++ 
+
+#### 0x01 利用
+
++ 
++ 
++ 
+
+#### 0x02 检测
+
++ 
+
+#### 0x03 缓解
+
++ 
++ 
++ 
+
+#### 0x04 原文链接
+
+https://attack.mitre.org/techniques/T1088/
+
 ### CMSTP
 
+#### 0x00 背景
+
++ 
++ 
+
+#### 0x01 利用
+
++ 
++ 
++ 
+
+#### 0x02 检测
+
++ 
+
+#### 0x03 缓解
+
++ 
++ 
++ 
+
+#### 0x04 原文链接
+
+https://attack.mitre.org/techniques/T1088/
 ### Code Signing
 
 ### Compile After Delivery
