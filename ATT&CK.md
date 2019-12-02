@@ -4,187 +4,7 @@
 
 ***
 
-<!-- TOC -->
-
-- [**MITRE ATT&CK Enterprise FrameWork**](#mitre-attck-enterprise-framework)
-  - [Perface](#perface)
-  - [Initial Access (初始入侵)](#initial-access-%e5%88%9d%e5%a7%8b%e5%85%a5%e4%be%b5)
-    - [Drive-by Compromise (过路式入侵)](#drive-by-compromise-%e8%bf%87%e8%b7%af%e5%bc%8f%e5%85%a5%e4%be%b5)
-      - [0x00 背景](#0x00-%e8%83%8c%e6%99%af)
-      - [0x01 利用](#0x01-%e5%88%a9%e7%94%a8)
-      - [0x02 探测](#0x02-%e6%8e%a2%e6%b5%8b)
-      - [0x03 缓解](#0x03-%e7%bc%93%e8%a7%a3)
-    - [Exploit Public-Facing Application (利用大众化应用程序)](#exploit-public-facing-application-%e5%88%a9%e7%94%a8%e5%a4%a7%e4%bc%97%e5%8c%96%e5%ba%94%e7%94%a8%e7%a8%8b%e5%ba%8f)
-      - [0x00 背景](#0x00-%e8%83%8c%e6%99%af-1)
-      - [0x01 利用](#0x01-%e5%88%a9%e7%94%a8-1)
-      - [0x02 检测](#0x02-%e6%a3%80%e6%b5%8b)
-      - [0x03 缓解](#0x03-%e7%bc%93%e8%a7%a3-1)
-    - [External Remote Services (远程服务)](#external-remote-services-%e8%bf%9c%e7%a8%8b%e6%9c%8d%e5%8a%a1)
-    - [Hardware Additions](#hardware-additions)
-    - [Replication Through Removable Media (通过便携式媒介复制)](#replication-through-removable-media-%e9%80%9a%e8%bf%87%e4%be%bf%e6%90%ba%e5%bc%8f%e5%aa%92%e4%bb%8b%e5%a4%8d%e5%88%b6)
-    - [Spearphishing Attachment (鱼叉式附件)](#spearphishing-attachment-%e9%b1%bc%e5%8f%89%e5%bc%8f%e9%99%84%e4%bb%b6)
-    - [Spearphishing Link (鱼叉式链接)](#spearphishing-link-%e9%b1%bc%e5%8f%89%e5%bc%8f%e9%93%be%e6%8e%a5)
-    - [Spearphishing via Service](#spearphishing-via-service)
-    - [Supply Chain Compromise](#supply-chain-compromise)
-    - [Trusted Relationship (信任关系)](#trusted-relationship-%e4%bf%a1%e4%bb%bb%e5%85%b3%e7%b3%bb)
-    - [Valid Accounts (有效账号)](#valid-accounts-%e6%9c%89%e6%95%88%e8%b4%a6%e5%8f%b7)
-  - [Execution](#execution)
-  - [Persistence](#persistence)
-  - [Privilege Escalation](#privilege-escalation)
-  - [Defense Evasion (防御规避)](#defense-evasion-%e9%98%b2%e5%be%a1%e8%a7%84%e9%81%bf)
-    - [Access Token Manipulation (访问令牌操纵) (Windows)](#access-token-manipulation-%e8%ae%bf%e9%97%ae%e4%bb%a4%e7%89%8c%e6%93%8d%e7%ba%b5-windows)
-    - [Binary Padding (二进制填充) (all)](#binary-padding-%e4%ba%8c%e8%bf%9b%e5%88%b6%e5%a1%ab%e5%85%85-all)
-      - [0x00 背景](#0x00-%e8%83%8c%e6%99%af-2)
-      - [0x01 利用](#0x01-%e5%88%a9%e7%94%a8-2)
-      - [0x02 检测](#0x02-%e6%a3%80%e6%b5%8b-1)
-      - [0x03 缓解](#0x03-%e7%bc%93%e8%a7%a3-2)
-      - [0x04 原文链接](#0x04-%e5%8e%9f%e6%96%87%e9%93%be%e6%8e%a5)
-    - [BITS Jobs(BITS(Windows后台智能传输服务)利用)(Windows)](#bits-jobsbitswindows%e5%90%8e%e5%8f%b0%e6%99%ba%e8%83%bd%e4%bc%a0%e8%be%93%e6%9c%8d%e5%8a%a1%e5%88%a9%e7%94%a8windows)
-      - [背景](#%e8%83%8c%e6%99%af)
-      - [利用](#%e5%88%a9%e7%94%a8)
-      - [检测](#%e6%a3%80%e6%b5%8b)
-      - [缓解](#%e7%bc%93%e8%a7%a3)
-      - [原文链接](#%e5%8e%9f%e6%96%87%e9%93%be%e6%8e%a5)
-    - [Bypass User Account Control](#bypass-user-account-control)
-    - [Clear Command History](#clear-command-history)
-    - [CMSTP](#cmstp)
-    - [Code Signing](#code-signing)
-    - [Compile After Delivery](#compile-after-delivery)
-    - [Compiled HTML File](#compiled-html-file)
-    - [Component Firmware](#component-firmware)
-    - [Component Object Model Hijacking](#component-object-model-hijacking)
-    - [Connection Proxy](#connection-proxy)
-    - [Control Panel Items](#control-panel-items)
-    - [DCShadow](#dcshadow)
-    - [Deobfuscate/Decode Files or Information](#deobfuscatedecode-files-or-information)
-    - [Disabling Security Tools](#disabling-security-tools)
-    - [DLL Search Order Hijacking](#dll-search-order-hijacking)
-    - [DLL Side-Loading](#dll-side-loading)
-    - [Execution Guardrails](#execution-guardrails)
-    - [Exploitation for Defense Evasion](#exploitation-for-defense-evasion)
-    - [Extra Window Memory Injection](#extra-window-memory-injection)
-    - [File and Directory Permissions Modification](#file-and-directory-permissions-modification)
-    - [File Deletion](#file-deletion)
-    - [File System Logical Offsets](#file-system-logical-offsets)
-    - [Gatekeeper Bypass](#gatekeeper-bypass)
-    - [Group Policy Modification](#group-policy-modification)
-    - [Hidden Files and Directories](#hidden-files-and-directories)
-    - [Hidden Users](#hidden-users)
-    - [Hidden Window](#hidden-window)
-    - [HISTCONTROL](#histcontrol)
-    - [Image File Execution Options Injection](#image-file-execution-options-injection)
-    - [Indicator Blocking](#indicator-blocking)
-    - [Indicator Removal from Tools](#indicator-removal-from-tools)
-    - [Indicator Removal on Host](#indicator-removal-on-host)
-    - [Indirect Command Execution](#indirect-command-execution)
-    - [Install Root Certificate](#install-root-certificate)
-    - [InstallUtil](#installutil)
-    - [Launchctl](#launchctl)
-    - [LC_MAIN Hijacking](#lcmain-hijacking)
-    - [Masquerading](#masquerading)
-    - [Modify Registry](#modify-registry)
-    - [Mshta](#mshta)
-    - [Network Share](#network-share)
-    - [Connection Removal](#connection-removal)
-    - [NTFS File Attributes](#ntfs-file-attributes)
-    - [Obfuscated Files or Information](#obfuscated-files-or-information)
-    - [Parent PID Spoofing](#parent-pid-spoofing)
-    - [Plist Modification](#plist-modification)
-    - [Port Knocking](#port-knocking)
-    - [Process Doppelgänging](#process-doppelg%c3%a4nging)
-    - [Process Hollowing](#process-hollowing)
-    - [Process Injection](#process-injection)
-    - [Redundant Access](#redundant-access)
-    - [Regsvcs/Regasm](#regsvcsregasm)
-    - [Regsvr32](#regsvr32)
-    - [Rootkit](#rootkit)
-    - [Rundll32](#rundll32)
-    - [Scripting](#scripting)
-    - [Signed Binary Proxy Execution](#signed-binary-proxy-execution)
-    - [Signed Script Proxy Execution](#signed-script-proxy-execution)
-    - [SIP and Trust Provider Hijacking](#sip-and-trust-provider-hijacking)
-    - [Software Packing](#software-packing)
-    - [Space after Filename](#space-after-filename)
-    - [Template Injectio](#template-injectio)
-    - [Timestomp](#timestomp)
-    - [Trusted Developer Utilities](#trusted-developer-utilities)
-    - [Valid Accounts](#valid-accounts)
-    - [Virtualization/Sandbox Evasion](#virtualizationsandbox-evasion)
-    - [Web Service](#web-service)
-    - [XSL Script Processing](#xsl-script-processing)
-  - [Credential Access (凭证访问)](#credential-access-%e5%87%ad%e8%af%81%e8%ae%bf%e9%97%ae)
-    - [Account Manipulation](#account-manipulation)
-    - [Bash History](#bash-history)
-    - [Brute Force](#brute-force)
-    - [Credential Dumping](#credential-dumping)
-    - [Credentials from Web Browsers](#credentials-from-web-browsers)
-    - [Credentials in Files](#credentials-in-files)
-    - [Credentials in Registry](#credentials-in-registry)
-    - [Exploitation for Credential Access](#exploitation-for-credential-access)
-    - [Forced Authentication](#forced-authentication)
-    - [Hooking](#hooking)
-    - [Input Capture](#input-capture)
-    - [Input Prompt](#input-prompt)
-    - [Kerberoasting](#kerberoasting)
-    - [Keychain](#keychain)
-    - [LLMNR/NBT-NS Poisoning and Relay](#llmnrnbt-ns-poisoning-and-relay)
-    - [Network Sniffing](#network-sniffing)
-    - [Password Filter DLL](#password-filter-dll)
-    - [Private Keys](#private-keys)
-    - [Securityd Memory](#securityd-memory)
-    - [Steal Web Session Cookie](#steal-web-session-cookie)
-    - [Two-Factor Authentication Interception](#two-factor-authentication-interception)
-  - [Discovery (嗅探扫描)](#discovery-%e5%97%85%e6%8e%a2%e6%89%ab%e6%8f%8f)
-    - [Account Discovery](#account-discovery)
-    - [Application Window Discovery](#application-window-discovery)
-    - [Browser Bookmark Discovery](#browser-bookmark-discovery)
-    - [Domain Trust Discovery](#domain-trust-discovery)
-    - [File and Directory Discovery](#file-and-directory-discovery)
-    - [Network Service Scanning](#network-service-scanning)
-    - [Network Share Discovery](#network-share-discovery)
-    - [Network Sniffing](#network-sniffing-1)
-    - [Password Policy Discovery](#password-policy-discovery)
-    - [Peripheral Device Discovery](#peripheral-device-discovery)
-    - [Permission Groups Discovery](#permission-groups-discovery)
-    - [Process Discovery](#process-discovery)
-    - [Query Registry](#query-registry)
-    - [Remote System Discovery](#remote-system-discovery)
-    - [Security Software Discovery](#security-software-discovery)
-    - [Software Discovery](#software-discovery)
-    - [System Information Discovery](#system-information-discovery)
-    - [System Network Configuration Discovery](#system-network-configuration-discovery)
-    - [System Network Connections Discovery](#system-network-connections-discovery)
-    - [System Owner/User Discovery](#system-owneruser-discovery)
-    - [System Service Discovery](#system-service-discovery)
-    - [System Time Discovery](#system-time-discovery)
-    - [Virtualization/Sandbox Evasion](#virtualizationsandbox-evasion-1)
-  - [Lateral Movement(横向移动）](#lateral-movement%e6%a8%aa%e5%90%91%e7%a7%bb%e5%8a%a8)
-    - [AppleScript](#applescript)
-    - [Application Access Token](#application-access-token)
-    - [Application Deployment Software](#application-deployment-software)
-    - [Component Object Model and Distributed COM](#component-object-model-and-distributed-com)
-    - [Exploitation of Remote Services](#exploitation-of-remote-services)
-    - [Internal Spearphishing](#internal-spearphishing)
-    - [Logon Scripts](#logon-scripts)
-    - [Pass the Hash](#pass-the-hash)
-    - [Pass the Ticket](#pass-the-ticket)
-    - [Remote Desktop Protocol](#remote-desktop-protocol)
-    - [Remote File Copy](#remote-file-copy)
-    - [Remote Services](#remote-services)
-    - [Replication Through Removable Media](#replication-through-removable-media)
-    - [Shared Webroot](#shared-webroot)
-    - [SSH Hijacking](#ssh-hijacking)
-    - [Taint Shared Content](#taint-shared-content)
-    - [Third-party Software](#third-party-software)
-    - [Web Session Cookie](#web-session-cookie)
-    - [Windows Admin Shares](#windows-admin-shares)
-    - [Windows Remote Management](#windows-remote-management)
-  - [Collection](#collection)
-  - [Command and Control](#command-and-control)
-  - [Exfiltration](#exfiltration)
-  - [Impact](#impact)
-
-<!-- /TOC -->
+<!-- TOC -->autoauto- [[**MITRE ATT&CK Enterprise FrameWork**](https://attack.mitre.org/)](#mitre-attck-enterprise-frameworkhttpsattackmitreorg)auto    - [Perface](#perface)auto    - [Initial Access (初始入侵)](#initial-access-初始入侵)auto        - [[Drive-by Compromise](https://attack.mitre.org/techniques/T1189/) (过路式入侵)](#drive-by-compromisehttpsattackmitreorgtechniquest1189-过路式入侵)auto            - [0x00 背景](#0x00-背景)auto            - [0x01 利用](#0x01-利用)auto            - [0x02 探测](#0x02-探测)auto            - [0x03 缓解](#0x03-缓解)auto        - [Exploit Public-Facing Application (利用大众化应用程序)](#exploit-public-facing-application-利用大众化应用程序)auto            - [0x00 背景](#0x00-背景-1)auto            - [0x01 利用](#0x01-利用-1)auto            - [0x02 检测](#0x02-检测)auto            - [0x03 缓解](#0x03-缓解-1)auto        - [External Remote Services (远程服务)](#external-remote-services-远程服务)auto        - [Hardware Additions](#hardware-additions)auto        - [Replication Through Removable Media (通过便携式媒介复制)](#replication-through-removable-media-通过便携式媒介复制)auto        - [Spearphishing Attachment (鱼叉式附件)](#spearphishing-attachment-鱼叉式附件)auto        - [Spearphishing Link (鱼叉式链接)](#spearphishing-link-鱼叉式链接)auto        - [Spearphishing via Service](#spearphishing-via-service)auto        - [Supply Chain Compromise](#supply-chain-compromise)auto        - [Trusted Relationship (信任关系)](#trusted-relationship-信任关系)auto        - [Valid Accounts (有效账号)](#valid-accounts-有效账号)auto    - [Execution](#execution)auto    - [Persistence](#persistence)auto    - [Privilege Escalation](#privilege-escalation)auto    - [Defense Evasion (防御规避)](#defense-evasion-防御规避)auto        - [[Access Token Manipulation](https://attack.mitre.org/techniques/T1134/) (访问令牌操纵) (Windows)](#access-token-manipulationhttpsattackmitreorgtechniquest1134-访问令牌操纵-windows)auto        - [[Binary Padding](https://attack.mitre.org/techniques/T1009/) (二进制填充) (all)](#binary-paddinghttpsattackmitreorgtechniquest1009-二进制填充-all)auto            - [0x00 背景](#0x00-背景-2)auto            - [0x01 利用](#0x01-利用-2)auto            - [0x02 检测](#0x02-检测-1)auto            - [0x03 缓解](#0x03-缓解-2)auto        - [[BITS Jobs](https://attack.mitre.org/techniques/T1197/) (BITS(Windows后台智能传输服务)利用) (Windows)](#bits-jobshttpsattackmitreorgtechniquest1197-bitswindows后台智能传输服务利用-windows)auto            - [0x00 背景](#0x00-背景-3)auto            - [0x01 利用](#0x01-利用-3)auto            - [0x02 检测](#0x02-检测-2)auto            - [0x03 缓解](#0x03-缓解-3)auto        - [Bypass User Account Control (UAC(用户账户控制)绕过) (Windows)](#bypass-user-account-control-uac用户账户控制绕过-windows)auto            - [内容同Privilege Escalation](#内容同privilege-escalation)auto            - [0x04 原文链接](#0x04-原文链接)auto        - [Clear Command History (清除命令历史记录) (Linux&MacOS)](#clear-command-history-清除命令历史记录-linuxmacos)auto            - [0x00 背景](#0x00-背景-4)auto            - [0x01 利用](#0x01-利用-4)auto            - [0x02 检测](#0x02-检测-3)auto            - [0x03 缓解](#0x03-缓解-4)auto            - [0x04 原文链接](#0x04-原文链接-1)auto        - [CMSTP](#cmstp)auto            - [0x00 背景](#0x00-背景-5)auto            - [0x01 利用](#0x01-利用-5)auto            - [0x02 检测](#0x02-检测-4)auto            - [0x03 缓解](#0x03-缓解-5)auto            - [0x04 原文链接](#0x04-原文链接-2)auto        - [Code Signing](#code-signing)auto        - [Compile After Delivery](#compile-after-delivery)auto        - [Compiled HTML File](#compiled-html-file)auto        - [Component Firmware](#component-firmware)auto        - [Component Object Model Hijacking](#component-object-model-hijacking)auto        - [Connection Proxy](#connection-proxy)auto        - [Control Panel Items](#control-panel-items)auto        - [DCShadow](#dcshadow)auto        - [Deobfuscate/Decode Files or Information](#deobfuscatedecode-files-or-information)auto        - [Disabling Security Tools](#disabling-security-tools)auto        - [DLL Search Order Hijacking](#dll-search-order-hijacking)auto        - [DLL Side-Loading](#dll-side-loading)auto        - [Execution Guardrails](#execution-guardrails)auto        - [Exploitation for Defense Evasion](#exploitation-for-defense-evasion)auto        - [Extra Window Memory Injection](#extra-window-memory-injection)auto        - [File and Directory Permissions Modification](#file-and-directory-permissions-modification)auto        - [File Deletion](#file-deletion)auto        - [File System Logical Offsets](#file-system-logical-offsets)auto        - [Gatekeeper Bypass](#gatekeeper-bypass)auto        - [Group Policy Modification](#group-policy-modification)auto        - [Hidden Files and Directories](#hidden-files-and-directories)auto        - [Hidden Users](#hidden-users)auto        - [Hidden Window](#hidden-window)auto        - [HISTCONTROL](#histcontrol)auto        - [Image File Execution Options Injection](#image-file-execution-options-injection)auto        - [Indicator Blocking](#indicator-blocking)auto        - [Indicator Removal from Tools](#indicator-removal-from-tools)auto        - [Indicator Removal on Host](#indicator-removal-on-host)auto        - [Indirect Command Execution](#indirect-command-execution)auto        - [Install Root Certificate](#install-root-certificate)auto        - [InstallUtil](#installutil)auto        - [Launchctl](#launchctl)auto        - [LC_MAIN Hijacking](#lc_main-hijacking)auto        - [Masquerading](#masquerading)auto        - [Modify Registry](#modify-registry)auto        - [Mshta](#mshta)auto        - [Network Share](#network-share)auto        - [Connection Removal](#connection-removal)auto        - [NTFS File Attributes](#ntfs-file-attributes)auto        - [Obfuscated Files or Information](#obfuscated-files-or-information)auto        - [Parent PID Spoofing](#parent-pid-spoofing)auto        - [Plist Modification](#plist-modification)auto        - [Port Knocking](#port-knocking)auto        - [Process Doppelgänging](#process-doppelgänging)auto        - [Process Hollowing](#process-hollowing)auto        - [Process Injection](#process-injection)auto        - [Redundant Access](#redundant-access)auto        - [Regsvcs/Regasm](#regsvcsregasm)auto        - [Regsvr32](#regsvr32)auto        - [Rootkit](#rootkit)auto        - [Rundll32](#rundll32)auto        - [Scripting](#scripting)auto        - [Signed Binary Proxy Execution](#signed-binary-proxy-execution)auto        - [Signed Script Proxy Execution](#signed-script-proxy-execution)auto        - [SIP and Trust Provider Hijacking](#sip-and-trust-provider-hijacking)auto        - [Software Packing](#software-packing)auto        - [Space after Filename](#space-after-filename)auto        - [Template Injectio](#template-injectio)auto        - [Timestomp](#timestomp)auto        - [Trusted Developer Utilities](#trusted-developer-utilities)auto        - [Valid Accounts](#valid-accounts)auto        - [Virtualization/Sandbox Evasion](#virtualizationsandbox-evasion)auto        - [Web Service](#web-service)auto        - [XSL Script Processing](#xsl-script-processing)auto    - [Credential Access (凭证访问)](#credential-access-凭证访问)auto        - [Account Manipulation](#account-manipulation)auto        - [Bash History](#bash-history)auto        - [Brute Force](#brute-force)auto        - [Credential Dumping](#credential-dumping)auto        - [Credentials from Web Browsers](#credentials-from-web-browsers)auto        - [Credentials in Files](#credentials-in-files)auto        - [Credentials in Registry](#credentials-in-registry)auto        - [Exploitation for Credential Access](#exploitation-for-credential-access)auto        - [Forced Authentication](#forced-authentication)auto        - [Hooking](#hooking)auto        - [Input Capture](#input-capture)auto        - [Input Prompt](#input-prompt)auto        - [Kerberoasting](#kerberoasting)auto        - [Keychain](#keychain)auto        - [LLMNR/NBT-NS Poisoning and Relay](#llmnrnbt-ns-poisoning-and-relay)auto        - [Network Sniffing](#network-sniffing)auto        - [Password Filter DLL](#password-filter-dll)auto        - [Private Keys](#private-keys)auto        - [Securityd Memory](#securityd-memory)auto        - [Steal Web Session Cookie](#steal-web-session-cookie)auto        - [Two-Factor Authentication Interception](#two-factor-authentication-interception)auto    - [Discovery (嗅探扫描)](#discovery-嗅探扫描)auto        - [Account Discovery](#account-discovery)auto        - [Application Window Discovery](#application-window-discovery)auto        - [Browser Bookmark Discovery](#browser-bookmark-discovery)auto        - [Domain Trust Discovery](#domain-trust-discovery)auto        - [File and Directory Discovery](#file-and-directory-discovery)auto        - [Network Service Scanning](#network-service-scanning)auto        - [Network Share Discovery](#network-share-discovery)auto        - [Network Sniffing](#network-sniffing-1)auto        - [Password Policy Discovery](#password-policy-discovery)auto        - [Peripheral Device Discovery](#peripheral-device-discovery)auto        - [Permission Groups Discovery](#permission-groups-discovery)auto        - [Process Discovery](#process-discovery)auto        - [Query Registry](#query-registry)auto        - [Remote System Discovery](#remote-system-discovery)auto        - [Security Software Discovery](#security-software-discovery)auto        - [Software Discovery](#software-discovery)auto        - [System Information Discovery](#system-information-discovery)auto        - [System Network Configuration Discovery](#system-network-configuration-discovery)auto        - [System Network Connections Discovery](#system-network-connections-discovery)auto        - [System Owner/User Discovery](#system-owneruser-discovery)auto        - [System Service Discovery](#system-service-discovery)auto        - [System Time Discovery](#system-time-discovery)auto        - [Virtualization/Sandbox Evasion](#virtualizationsandbox-evasion-1)auto    - [Lateral Movement(横向移动）](#lateral-movement横向移动)auto        - [AppleScript](#applescript)auto        - [Application Access Token](#application-access-token)auto        - [Application Deployment Software](#application-deployment-software)auto        - [Component Object Model and Distributed COM](#component-object-model-and-distributed-com)auto        - [Exploitation of Remote Services](#exploitation-of-remote-services)auto        - [Internal Spearphishing](#internal-spearphishing)auto        - [Logon Scripts](#logon-scripts)auto        - [Pass the Hash](#pass-the-hash)auto        - [Pass the Ticket](#pass-the-ticket)auto        - [Remote Desktop Protocol](#remote-desktop-protocol)auto        - [Remote File Copy](#remote-file-copy)auto        - [Remote Services](#remote-services)auto        - [Replication Through Removable Media](#replication-through-removable-media)auto        - [Shared Webroot](#shared-webroot)auto        - [SSH Hijacking](#ssh-hijacking)auto        - [Taint Shared Content](#taint-shared-content)auto        - [Third-party Software](#third-party-software)auto        - [Web Session Cookie](#web-session-cookie)auto        - [Windows Admin Shares](#windows-admin-shares)auto        - [Windows Remote Management](#windows-remote-management)auto    - [Collection](#collection)auto    - [Command and Control](#command-and-control)auto    - [Exfiltration](#exfiltration)auto    - [Impact](#impact)autoauto<!-- /TOC -->
 
 ***
 
@@ -282,12 +102,12 @@
 
 ## Defense Evasion (防御规避)
 
-### Access Token Manipulation (访问令牌操纵) (Windows)
+### [Access Token Manipulation](https://attack.mitre.org/techniques/T1134/) (访问令牌操纵) (Windows)
 
 内容同Privilege Escalation
-[官方链接](https://attack.mitre.org/techniques/T1134/)
+***
 
-### Binary Padding (二进制填充) (all)
+### [Binary Padding](https://attack.mitre.org/techniques/T1009/) (二进制填充) (all)
 
 #### 0x00 背景
 
@@ -307,26 +127,10 @@
 #### 0x03 缓解
 
 - 属于基于系统特性的恶意使用，无法通过预防性控制简单缓解
+  
+***
 
-#### 0x04 原文链接
-
-[https://attack.mitre.org/techniques/T1009/](https://attack.mitre.org/techniques/T1009/)
-
-<<<<<<< HEAD
-### BITS Jobs(BITS(Windows后台智能传输服务)利用)(Windows)
-
-#### 背景
-
-- Windows后台智能传输服务（BITS）是一种通过组件对象模型（COM）公开的一种低带宽异步文件传输机制，通常由更新程序、messengers服务和其他使用空闲带宽，并在后台运行而不中断其他联网应用的程序使用
-- Microsoft提供了一个名为“ bitsadmin ” 的二进制文件和PowerShell cmdlet，用于创建和管理文件传输
-
-#### 利用
-
-- 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
-- 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
-
-=======
-### BITS Jobs (BITS(Windows后台智能传输服务)利用) (Windows)
+### [BITS Jobs](https://attack.mitre.org/techniques/T1197/) (BITS(Windows后台智能传输服务)利用) (Windows)
 
 #### 0x00 背景
 
@@ -335,105 +139,76 @@
 
 #### 0x01 利用
 
-<<<<<<< HEAD
-+ 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
-+ 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
->>>>>>> da02016b3a4c37a5f0044fc63de729206349a90b
-一个案例：https://www.cnblogs.com/xiaozi/p/11833583.html
-=======
-+ 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作.
-+ 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化.
-一个案例：https://www.cnblogs.com/xiaozi/p/11833583.html
-+ 使用BITS上传功能进行 Exfiltration Over Alternative Protocol （基于替代协议的渗透）.
->>>>>>> 0c92ca2ae69ffc8cf065dc01d7cde9a487d1fa10
+- 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
+- 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
+> 一个案例：[https://www.cnblogs.com/xiaozi/p/11833583.html](https://www.cnblogs.com/xiaozi/p/11833583.html)
+- 使用BITS上传功能进行 Exfiltration Over Alternative Protocol （基于替代协议的渗透）.
 
-- 使用BITS上传功能进行 Exfiltration Over Alternative Protocol （基于替代协议的渗透）
-
-<<<<<<< HEAD
-#### 检测
+#### 0x02 检测
 
 - 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术
 
-#### 缓解
+#### 0x03 缓解
 
 - 流量过滤：修改安全设备策略，仅允许合法的BITS通信
 - 系统配置：减少“组策略”中的默认BITS作业生存期，或通过编辑注册表HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS缩短 JobInactivityTimeout和MaxDownloadTime的值
 - 访问控制：将BITS界面的访问权限限制为特定的用户或组
 
-#### 原文链接
-=======
-#### 0x02 检测
+***
 
-+ 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术.
-
-#### 0x03 缓解
-
-+ 流量过滤：修改安全设备策略，仅允许合法的BITS通信.
-+ 系统配置：减少“组策略”中的默认BITS作业生存期，或通过编辑注册表HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS缩短 JobInactivityTimeout和MaxDownloadTime的值.
-+ 访问控制：将BITS界面的访问权限限制为特定的用户或组.
-
-#### 0x04 原文链接
->>>>>>> da02016b3a4c37a5f0044fc63de729206349a90b
-
-https://attack.mitre.org/techniques/T1197/
-
-### Bypass User Account Control (UAC(用户账户控制)绕过) (Windows)
+### [Bypass User Account Control](https://attack.mitre.org/techniques/T1088/) (UAC(用户账户控制)绕过) (Windows)
 
 #### 内容同Privilege Escalation
 
-#### 0x04 原文链接
+***
 
-https://attack.mitre.org/techniques/T1088/
-
-### Clear Command History (清除命令历史记录) (Linux&MacOS)
+### [Clear Command History](https://attack.mitre.org/techniques/T1088/) (清除命令历史记录) (Linux&MacOS)
 
 #### 0x00 背景
 
-+ macOS和Linux都记录用户在终端terminal中键入的命令，通过"history"命令查看
-+ 登录后，在环境变量"HISTFILE"指向的文件中记录"HISTFILESIZE"大小的命令历史记录.用户注销时，信息刷新到主目录名为~/.bash_history的文件中.
-+ 保存了在命令行上键入的所有内容，因此也保存了在命令行上传递的密码
+- macOS和Linux都记录用户在终端terminal中键入的命令，通过"history"命令查看
+- 登录后，在环境变量"HISTFILE"指向的文件中记录"HISTFILESIZE"大小的命令历史记录.用户注销时，信息刷新到主目录名为~/.bash_history的文件中.
+- 保存了在命令行上键入的所有内容，因此也保存了在命令行上传递的密码
 
 #### 0x01 利用
 
-+ 在"~/.bash_history"等文件中搜索明文密码.
-+ 阻止记录/删除攻击者键入的命令(unset HISTFILE，export HISTFILESIZE=0，history -c，rm ~/.bash_history).
+- 在"~/.bash_history"等文件中搜索明文密码.
+- 阻止记录/删除攻击者键入的命令(unset HISTFILE，export HISTFILESIZE=0，history -c，rm ~/.bash_history).
 
 #### 0x02 检测
 
-+ 用户身份验证后(尤其是通过SSH远程登录)，"~/.bash_history"中没有该用户的情况.
-+ 有修改"HISTFILE"和"HISTFILESIZE"环境变量，删除/清空"~/.bash_history"文件操作.
+- 用户身份验证后(尤其是通过SSH远程登录)，"~/.bash_history"中没有该用户的情况.
+- 有修改"HISTFILE"和"HISTFILESIZE"环境变量，删除/清空"~/.bash_history"文件操作.
 
 #### 0x03 缓解
 
-+ 环境变量配置：将关联"HISTFILE","HISTFILESIZE"的环境变量设置为只读，确保保留用户的命令历史记录.
-+ 文件访问控制：阻止用户删除或写入~/.bash_history.
+- 环境变量配置：将关联"HISTFILE","HISTFILESIZE"的环境变量设置为只读，确保保留用户的命令历史记录.
+- 文件访问控制：阻止用户删除或写入~/.bash_history.
 
-#### 0x04 原文链接
-
-https://attack.mitre.org/techniques/T1088/
+***
 
 ### CMSTP
 
 #### 0x00 背景
 
-+ 
-+ 
+- 
+- 
 
 #### 0x01 利用
 
-+ 
-+ 
-+ 
+- 
+- 
+- 
 
 #### 0x02 检测
 
-+ 
+- 
 
 #### 0x03 缓解
 
-+ 
-+ 
-+ 
+- 
+- 
+- 
 
 #### 0x04 原文链接
 
