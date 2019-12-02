@@ -43,16 +43,9 @@
       - [0x02 检测](#0x02-%e6%a3%80%e6%b5%8b-3)
       - [0x03 缓解](#0x03-%e7%bc%93%e8%a7%a3-3)
       - [0x04 原文链接](#0x04-%e5%8e%9f%e6%96%87%e9%93%be%e6%8e%a5)
-    - [BITS Jobs(BITS(Windows后台智能传输服务)利用)(Windows)](#bits-jobsbitswindows%e5%90%8e%e5%8f%b0%e6%99%ba%e8%83%bd%e4%bc%a0%e8%be%93%e6%9c%8d%e5%8a%a1%e5%88%a9%e7%94%a8windows)
-      - [背景](#%e8%83%8c%e6%99%af)
-      - [利用](#%e5%88%a9%e7%94%a8)
     - [BITS Jobs (BITS(Windows后台智能传输服务)利用) (Windows)](#bits-jobs-bitswindows%e5%90%8e%e5%8f%b0%e6%99%ba%e8%83%bd%e4%bc%a0%e8%be%93%e6%9c%8d%e5%8a%a1%e5%88%a9%e7%94%a8-windows)
       - [0x00 背景](#0x00-%e8%83%8c%e6%99%af-4)
       - [0x01 利用](#0x01-%e5%88%a9%e7%94%a8-4)
-- [一个案例：https://www.cnblogs.com/xiaozi/p/11833583.html](#%e4%b8%80%e4%b8%aa%e6%a1%88%e4%be%8bhttpswwwcnblogscomxiaozip11833583html)
-      - [检测](#%e6%a3%80%e6%b5%8b)
-      - [缓解](#%e7%bc%93%e8%a7%a3)
-- [#### 原文链接](#%e5%8e%9f%e6%96%87%e9%93%be%e6%8e%a5)
       - [0x02 检测](#0x02-%e6%a3%80%e6%b5%8b-4)
       - [0x03 缓解](#0x03-%e7%bc%93%e8%a7%a3-4)
       - [0x04 原文链接](#0x04-%e5%8e%9f%e6%96%87%e9%93%be%e6%8e%a5-1)
@@ -368,68 +361,38 @@
 
 [https://attack.mitre.org/techniques/T1009/](https://attack.mitre.org/techniques/T1009/)
 
-<<<<<<< HEAD
-### BITS Jobs(BITS(Windows后台智能传输服务)利用)(Windows)
-
-#### 背景
-
-- Windows后台智能传输服务（BITS）是一种通过组件对象模型（COM）公开的一种低带宽异步文件传输机制，通常由更新程序、messengers服务和其他使用空闲带宽，并在后台运行而不中断其他联网应用的程序使用
-- Microsoft提供了一个名为“ bitsadmin ” 的二进制文件和PowerShell cmdlet，用于创建和管理文件传输
-
-#### 利用
-
-- 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
-- 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
-
-=======
 ### BITS Jobs (BITS(Windows后台智能传输服务)利用) (Windows)
 
 #### 0x00 背景
 
-+ Windows后台智能传输服务（BITS）是一种通过组件对象模型（COM）公开的一种低带宽异步文件传输机制，通常由更新程序、messengers服务和其他使用空闲带宽，并在后台运行而不中断其他联网应用的程序使用.
-+ Microsoft提供了一个名为“ bitsadmin ” 的二进制文件和PowerShell cmdlet，用于创建和管理文件传输.
+- Windows后台智能传输服务（BITS）是一种通过组件对象模型（COM）公开的一种低带宽异步文件传输机制，通常由更新程序、messengers服务和其他使用空闲带宽，并在后台运行而不中断其他联网应用的程序使用.
+- Microsoft提供了一个名为 **bitsadmin** 的二进制文件和PowerShell cmdlet，用于创建和管理文件传输.
 
 #### 0x01 利用
 
-<<<<<<< HEAD
-+ 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
-+ 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
->>>>>>> da02016b3a4c37a5f0044fc63de729206349a90b
+- 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作
+- 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
+
 一个案例：https://www.cnblogs.com/xiaozi/p/11833583.html
-=======
-+ 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作.
-+ 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化.
+
+- 使用BITS在运行恶意代码后进行下载、执行、清理等危险操作.
+- 使用BITS通过创建长期作业(>90D)或在作业完成/出错或设备重启时调用任意程序，实现持久化
+  
 一个案例：https://www.cnblogs.com/xiaozi/p/11833583.html
-+ 使用BITS上传功能进行 Exfiltration Over Alternative Protocol （基于替代协议的渗透）.
->>>>>>> 0c92ca2ae69ffc8cf065dc01d7cde9a487d1fa10
 
 - 使用BITS上传功能进行 Exfiltration Over Alternative Protocol （基于替代协议的渗透）
 
-<<<<<<< HEAD
-#### 检测
-
-- 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术
-
-#### 缓解
-
-- 流量过滤：修改安全设备策略，仅允许合法的BITS通信
-- 系统配置：减少“组策略”中的默认BITS作业生存期，或通过编辑注册表HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS缩短 JobInactivityTimeout和MaxDownloadTime的值
-- 访问控制：将BITS界面的访问权限限制为特定的用户或组
-
-#### 原文链接
-=======
 #### 0x02 检测
 
-+ 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术.
+- 在扫描和基于访问(on-access based)的检测工具中，引入基于文件的签名(file-based signature)技术.
 
 #### 0x03 缓解
 
-+ 流量过滤：修改安全设备策略，仅允许合法的BITS通信.
-+ 系统配置：减少“组策略”中的默认BITS作业生存期，或通过编辑注册表HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS缩短 JobInactivityTimeout和MaxDownloadTime的值.
-+ 访问控制：将BITS界面的访问权限限制为特定的用户或组.
+- 流量过滤：修改安全设备策略，仅允许合法的BITS通信.
+- 系统配置：减少“组策略”中的默认BITS作业生存期，或通过编辑注册表HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS缩短 JobInactivityTimeout和MaxDownloadTime的值.
+- 访问控制：将BITS界面的访问权限限制为特定的用户或组.
 
 #### 0x04 原文链接
->>>>>>> da02016b3a4c37a5f0044fc63de729206349a90b
 
 https://attack.mitre.org/techniques/T1197/
 
@@ -445,24 +408,24 @@ https://attack.mitre.org/techniques/T1088/
 
 #### 0x00 背景
 
-+ macOS和Linux都记录用户在终端terminal中键入的命令，通过"history"命令查看
-+ 登录后，在环境变量"HISTFILE"指向的文件中记录"HISTFILESIZE"大小的命令历史记录.用户注销时，信息刷新到主目录名为~/.bash_history的文件中.
-+ 保存了在命令行上键入的所有内容，因此也保存了在命令行上传递的密码
+- macOS和Linux都记录用户在终端terminal中键入的命令，通过"history"命令查看
+- 登录后，在环境变量"HISTFILE"指向的文件中记录"HISTFILESIZE"大小的命令历史记录.用户注销时，信息刷新到主目录名为~/.bash_history的文件中.
+- 保存了在命令行上键入的所有内容，因此也保存了在命令行上传递的密码
 
 #### 0x01 利用
 
-+ 在"~/.bash_history"等文件中搜索明文密码.
-+ 阻止记录/删除攻击者键入的命令(unset HISTFILE，export HISTFILESIZE=0，history -c，rm ~/.bash_history).
+- 在"~/.bash_history"等文件中搜索明文密码.
+- 阻止记录/删除攻击者键入的命令(unset HISTFILE，export HISTFILESIZE=0，history -c，rm ~/.bash_history).
 
 #### 0x02 检测
 
-+ 用户身份验证后(尤其是通过SSH远程登录)，"~/.bash_history"中没有该用户的情况.
-+ 有修改"HISTFILE"和"HISTFILESIZE"环境变量，删除/清空"~/.bash_history"文件操作.
+- 用户身份验证后(尤其是通过SSH远程登录)，"~/.bash_history"中没有该用户的情况.
+- 有修改"HISTFILE"和"HISTFILESIZE"环境变量，删除/清空"~/.bash_history"文件操作.
 
 #### 0x03 缓解
 
-+ 环境变量配置：将关联"HISTFILE","HISTFILESIZE"的环境变量设置为只读，确保保留用户的命令历史记录.
-+ 文件访问控制：阻止用户删除或写入~/.bash_history.
+- 环境变量配置：将关联"HISTFILE","HISTFILESIZE"的环境变量设置为只读，确保保留用户的命令历史记录.
+- 文件访问控制：阻止用户删除或写入~/.bash_history.
 
 #### 0x04 原文链接
 
@@ -494,6 +457,7 @@ https://attack.mitre.org/techniques/T1088/
 #### 0x04 原文链接
 
 https://attack.mitre.org/techniques/T1088/
+
 ### Code Signing
 
 ### Compile After Delivery
