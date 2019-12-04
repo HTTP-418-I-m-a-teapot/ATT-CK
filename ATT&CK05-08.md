@@ -18,7 +18,7 @@
 >[原文链接](https://attack.mitre.org/techniques/T1134/)
 
 #### 背景
-同上一部分特权升级
+同3 Privilege Escalation
 
 
 
@@ -27,20 +27,21 @@
 ## Access Token Manipulation (应用程序访问令牌) (SaaS&Office 365)
 >[原文链接](https://attack.mitre.org/techniques/T1527/)
 
+同8 Lateral Movement
 #### 背景
 
-- 应用程序访问令牌用于代表用户发出授权的API请求，并且通常被作为在基于**云**的应用程序和软件即服务（**SaaS**）中访问资源的方式；
+- 应用程序访问令牌用于代表用户发出授权的API请求，并且通常被作为在**云上应用**和**SaaS**(软件即服务)中访问资源的方式；
 - 这些框架(如Oauth)可共同用于验证用户并确定用户被允许执行的操作。一旦建立了认证，令牌就可以授权操作，而无需传递用户的实际凭据；
 - 攻击者可以使用应用程序访问令牌绕过传统的身份验证过程，并访问远程系统上的受限帐户、信息或服务，并作为**其他类型攻击的初始步骤**；
 - 如果令牌授予受害者电子邮件的访问权限，则攻击者可能会通过触发忘记的密码，将访问权限扩展到目标用户订阅的所有其他服务。
 
 #### 利用场景
-- 以Oauth为例，如果后台访问的"更新令牌"被启用，一旦将OAuth访问令牌被恶意应用程序利用，，它有可能获得对用户帐户功能的**长期访问**；
-- 通过令牌进行的直接API访问**不受第二个身份验证因素的影响**，并且可能不受诸如更改密码之类的直接策略的影响；
+- 以Oauth为例，如果后台访问的"更新令牌"功能启用，一旦将OAuth访问令牌被恶意程序利用，攻击者就有可能获得对用户帐户功能的**长期访问**；
+- 通过令牌进行的直接API访问**不受第二个身份验证因素的影响**，并且可能绕过更改密码等策略的影响；
 - 由于访问可以与合法的操作流程保持一致，因此即使从服务端也**难以检测**到通过API进行的访问滥用。
 
 
-#### 缓解
+#### 防御方式
 缓解|描述
 :--:|:--
 **日志审计**|监视令牌异常使用情况以及授予异常或可疑应用程序的权限;
@@ -64,7 +65,7 @@
 - 改变文件**散列**，用以绕过基于哈希(hash-based)的工具的检测/防御机制；
 - 改变文件**大小**，用以绕过不为大文件提供检测服务工具的机制（如VirusTotal），并减少了文件被收集分析的可能性。
 
-#### 缓解
+#### 防御方式
 
 - 属于基于系统特性的恶意使用，无法通过预防性控制简单缓解。
  
@@ -89,20 +90,20 @@
   > [一个案例](https://www.cnblogs.com/xiaozi/p/11833583.html)
 - 使用BITS上传功能进行 **Exfiltration Over Alternative Protocol** （基于替代协议的渗透）。
 
-#### 缓解
+#### 防御方式
 缓解|描述
 :--:|:--
 **流量过滤**|修改安全设备策略，仅允许合法的BITS通信；
-**系统配置**|减少“组策略”中的默认BITS作业生存期，或通过编辑注册表HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS 缩短 JobInactivityTimeout 和 MaxDownloadTime的值；
+**系统配置**|减少“组策略”中的默认BITS作业生存期，或通过编辑注册表`HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\BITS` 缩短 `JobInactivityTimeout` 和 `MaxDownloadTime` 的值；
 **访问控制**|将BITS界面的访问权限限制为特定的用户或组。
 
 #### 检测
 
 - **运行状态**：
-  - 使用SC查询程序 sc query bits 检查状态；
-  - 使用BITSAdmin工具 bitsadmin /list /allusers /verbose 枚举活动的BITS任务。
+  - 使用SC查询程序`sc query bits`检查状态；
+  - 使用BITSAdmin工具`bitsadmin /list /allusers /verbose`枚举活动的BITS任务。
 - **使用情况**：
-  - 监视BITSAdmin工具使用情况，关注‘Transfer’, 'Create', 'AddFile', 'SetNotifyFlags', 'SetNotifyCmdLine', 'SetMinRetryDelay', 'SetCustomHeaders','Resume'命令；
+  - 监视BITSAdmin工具使用情况，关注`Transfer`、`Create`、`AddFile`、`SetNotifyFlags`、 `SetNotifyCmdLine`、`SetMinRetryDelay`、
   - Admin与Windows事件日志中的BITS情况；
   - 分析BITS作业数据库信息。
 - **网络活动**：
@@ -124,25 +125,25 @@
 
 #### 背景
 
-- macOS和Linux都记录用户在终端terminal中键入的命令，通过"history"命令查看；
-- 登录后，在环境变量"HISTFILE"指向的文件中记录"HISTFILESIZE"大小的命令历史记录.用户注销时，信息刷新到主目录名为~/.bash_history的文件中；
+- macOS和Linux都记录用户在终端terminal中键入的命令，通过`history`命令查看；
+- 登录后，在环境变量`HISTFILE`指向的文件中记录`HISTFILESIZE`大小的命令历史记录.用户注销时，信息刷新到主目录名为 `~/.bash_history` 的文件中；
 - 保存了在命令行上键入的所有内容，因此也保存了在命令行上传递的密码。
 
 #### 利用场景
 
-- 在"~/.bash_history"等文件中**搜索**明文密码；
-- **阻止记录/删除**攻击者键入的命令(unset HISTFILE，export HISTFILESIZE=0，history -c，rm ~/.bash_history)。
+- 在`~/.bash_history`等文件中**搜索**明文密码；
+- **阻止记录/删除**攻击者键入的命令(`unset HISTFILE`，`export HISTFILESIZE=0`，`history -c`，`rm ~/.bash_history`)。
 
-#### 缓解
+#### 防御方式
 缓解|描述
 :--:|:--
-**环境变量配置**|将关联"HISTFILE","HISTFILESIZE"的环境变量设置为只读，确保保留用户的命令历史记录；
-**文件访问控制**|阻止用户删除或写入~/.bash_history。
+**环境变量配置**|将关联`HISTFILE`,`HISTFILESIZE`的环境变量设置为只读，确保保留用户的命令历史记录；
+**文件访问控制**|阻止用户删除或写入`~/.bash_history`。
 
 #### 检测
 - 基于行为
-  - 用户身份验证后(尤其是通过SSH远程登录)，"~/.bash_history"中没有该用户记录的情况；
-  - 有修改"HISTFILE"和"HISTFILESIZE"环境变量，删除/清空"~/.bash_history"文件操作。
+  - 用户身份验证后(尤其是通过SSH远程登录)，`~/.bash_history`中没有该用户记录的情况；
+  - 有修改`HISTFILE`和`HISTFILESIZE`环境变量，删除/清空`~/.bash_history`文件操作。
 ***
 
 ### CMSTP (CMSTP-Microsoft连接管理器配置文件安装程序-利用) (Windows)
@@ -163,7 +164,7 @@
 - 绕过用户帐户控制，并通过自动提升(auto-elevated)的COM界面从恶意INF**执行**任意命令。
   > [一个案例](https://www.freebuf.com/articles/system/172515.html)
 
-#### 缓解
+#### 防御方式
 缓解|描述
 :--:|:--
 **功能禁用**|特定情况下（除VPN连接安装），CMSTP.exe 可能不是必需的；
@@ -173,12 +174,12 @@
 - **基于行为**：使用进程监视来检测和分析 CMSTP.exe 的执行情况和参数.将CMSTP.exe既往历史中最近调用与已知良好参数与加载文件的先前历史进行比较，以确定异常和潜在的对抗活动；
 - **日志分析**：使用系统监视器通过检测策略，识别特定攻击程序对CMSTP.exe的潜在滥用。
   - 检测本地/远程负载加载执行：
-    Event 1 (Process creation) :ParentImage 包含 CMSTP.exe
-    Event 3 (Network connection) :Image 包含 CMSTP.exe 且源IP为外部IP
+    `Event 1 (Process creation) :ParentImage` 包含 CMSTP.exe
+    `Event 3 (Network connection) :Image` 包含 CMSTP.exe 且源IP为外部IP
   - 检测利用自动提升的COM进程绕过UAC：
-    Event 10 (ProcessAccess) :CallTrace 包含 CMLUA.dll
-    Event 12 or 13 (RegistryEvent) :TargetObject 包含 CMMGR32.exe
-    监视事件，如进程创建 (Sysmon Event 1), 涉及自动提升的 CMSTP COM 窗口 比如 CMSTPLUA (3E5FC7F9-9A51-4367-9063-A120244FBEC7) ，CMLUAUTIL (3E000D72-A845-4CD9-BD83-80C07C3B881F)
+    `Event 10 (ProcessAccess) :CallTrace` 包含 CMLUA.dll
+    `Event 12 or 13 (RegistryEvent) :TargetObject` 包含 CMMGR32.exe
+    监视事件，如进程创建 (Sysmon Event 1), 涉及自动提升的 CMSTP COM 窗口 比如 `CMSTPLUA (3E5FC7F9-9A51-4367-9063-A120244FBEC7)` ，`CMLUAUTIL (3E000D72-A845-4CD9-BD83-80C07C3B881F)`
 
 
 ***
@@ -194,7 +195,7 @@
 ### 利用场景
 - 可用于**绕过**要求**签名**才能在系统上执行的安全策略。
 
-### 缓解
+### 防御方式
 - 属于基于系统特性的恶意使用，无法通过预防性控制简单缓解。
   
 ### 检测
@@ -217,7 +218,7 @@
 ### 利用场景
 - 与模糊文件或信息(Obfuscated Files or Information)相似，基于文本的源代码文件可能会破坏针对可执行文件/二进制文件的保护措施的分析和审查。
   
-### 缓解
+### 防御方式
 - 属于基于系统特性的恶意使用，无法通过预防性控制简单缓解。
   
 ### 检测
@@ -240,7 +241,7 @@
 - 攻击者可能会滥用该技术来**隐藏恶意代码**。包含嵌入式有效负载的自定义CHM文件可以传递给受害者，然后由User Execution触发。
 - CHM执行还可以**绕过**没有考虑通过hh.exe执行二进制文件的，较旧和未打补丁的系统上的应用**白名单**。
 
-## 缓解
+## 防御方式
 缓解|描述
 :--:|:--
 **可执行程序白名单**|如果给定系统或网络不需要hh.exe，使用应用程序白名单来阻止hh.exe执行；
@@ -266,7 +267,7 @@
 - 可以提供对系统的**持久访问级别**，但可能会出现权限维持故障和硬盘重映像等问题。
 - 可以提供逃避**基于软件的防御和完整性检查**方法。
   
-## 缓解
+## 防御方式
 - 属于基于系统特性的恶意使用，无法通过预防性控制简单缓解。
   
 ## 检测
@@ -288,12 +289,12 @@
 - 攻击者可以使用此系统来插入通过**劫持COM引用和关系**(references and relationships )作为**持久性**手段来代替合法软件，通过正常的系统操作执行该系统组件时，将改为执行攻击者的代码。
 - 攻击者很可能会劫持**经常使用的对象**，以维持一致的持久性水平，但不太可能破坏系统内的显著功能，以避免系统不稳定导致异常检测。
   
-## 缓解
+## 防御方式
 - 属于基于系统特性的恶意使用，无法通过预防性控制简单缓解。
   
 ## 检测
 - **注册表**：搜索已被替换的注册表引用，即通过注册表操作将已知二进制路径替换为未知路径来检测COM劫持。
-  - 即使某些第三方应用程序定义了用户COM对象，如果用户的HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\对象在机器之前被加载，则该项中的对象有可能是可疑的，应该进行调查。
+  - 即使某些第三方应用程序定义了用户COM对象，如果用户的`HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\`对象在机器之前被加载，则该项中的对象有可能是可疑的，应该进行调查。
 - **软件DLL负载**：检测与COM对象注册表修改相关的任何异常DLL负载。
 
 ***
@@ -319,7 +320,7 @@
   - 另外，该网络可用于将信息从一个系统转发到另一个系统，以**避免流量广播**。
 - **ssrf**
 
-## 缓解
+## 防御方式
 缓解|描述
 :--:|:--
 **网络入侵防御**|使用网络签名识别特定攻击者恶意软件流量的NIPS可用于减轻网络级别的活动。
@@ -343,94 +344,134 @@
 
 ### Control Panel Items
 >[原文链接](https://attack.mitre.org/techniques/T1196/)
+
 同第二部分“执行”
+
+***
+### DCShadow 影子DC(域控制器)
+>[原文链接](https://attack.mitre.org/techniques/T1207/)
+
 ## 背景
-
+- DCShadow是一种通过**注册**（或进行再次非活跃注册inactive registration）并**冒充**域控制器（DC）的行为来操作活动目录 Active Directory（AD）数据，包括对象和架构(objects and schemas)的方法。
+  >[举个栗子](https://www.secpulse.com/archives/70892.html)
+- 一旦注册成功，影子DC就可以为包括凭据和密钥在内的任何域对象进行**注入和更改**，并将其复制到AD基础结构中。
+- 注册恶意DC需要在AD模式的配置`Configuration`中创建新服务器和`nTDSDSA`对象，这需要管理员权限（DC的域权限或本地权限）或KRBTGT哈希。
+  
 ## 利用场景
+- 此技术可能会**绕过系统日志记录和安全监视设备**，如SIEM产品（因为影子DC采取的操作可能不会报告给这些传感器）。
+- 该技术还可以用于**更改和删除备份数据**以及其他关联的元数据，以阻止深度分析(法医分析)forensic analysis。
+- 攻击者还可以利用此技术执行**SID历史记录注入**和操纵AD对象（如帐户，访问控制列表，模式schemas）以**建立持久性后门**。
 
-## 缓解
-缓解|描述
-:--:|:--
+## 防御方式
+- 基于系统特性的恶意使用，无法通过预防性控制简单缓解。
 
 ## 检测
+- **网络流量**：
+  - 监视和分析与DC之间以及DC与非DC主机之间的**数据复制**（例如，对`DrsAddEntry`、`DrsReplicaAdd`，尤其是`GetNCChanges`的调用）相关的网络流量。DC复制会每15分钟自动进行一次，但也可以由攻击者或合法的紧急更改（如修改密码）触发。
+  - 监视和警告AD**对象复制**（审核详细目录服务复制事件Audit Detailed Directory Service Replication `Events 4928/4929`）。
+- **目录状态**：利用AD目录同步（DirSync），监视使用AD复制cookies导致的目录状态更改。
+- **Configuration**：对AD模式的配置`Configuration`进行定期基线分析，并在创建`nTDSDSA`对象时发出警报。
+- **SPN使用情况**：
+  - 与目录复制服务（DRS,Directory Replication Service）远程协议接口（`GUID E3514235–4B06–11D1-AB04–00C04FC2DCD2`）关联的SPN可以在不记录的情况下设置。
+  - 可以检测不在 DC 组织单元（OU,organizational unit）中的计算机对Kerberos服务主体名称（SPNs, Service Principal Names），尤其是与服务相关联的名称（以“GC/”开头）的使用情况，
+  - 恶意的影子DC必须使用这两个SPN作为服务进行身份验证，才能成功完成复制过程。
+***
+### Deobfuscate/Decode Files or Information （反混淆/解码) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1140/)
 
-### DCShadow DC(域控制器)阴影
+## 背景
+- 攻击者可能会使用混淆文件或信息来隐藏入侵的分析结果，根据传入信息的利用方式，可能需要使用单独的机制来解码或模糊处理该信息。这样做的方法包括恶意软件内置功能、脚本、PowerShell或使用系统上存在的程序。
+
+## 利用场景
+- 示例之一是使用certutil解码隐藏在证书文件中的远程访问工具的可执行文件。
+- 另一个示例是使用Windows `copy /b` 命令将二进制片段重新组装为恶意负载。
+- 为了防止检测，有效负载可能被压缩，存档或编码。这些有效负载使用了混淆文件或信息技术，可以在初始访问期间与之后**逃避检测**。
+- 有时，作为**用户执行**的一部分，可能需要用户打开灯操作以对其进行去混淆或解码处理。可能还要求用户输入密码以打开由攻击者提供的受密码保护的压缩/编码文件。
+- 对手也可以使用压缩或存档脚本，例如Javascript。
+
+## 防御方式
+- 基于系统特性的恶意使用，无法通过预防性控制简单缓解。
+
+## 检测
+- 如果被混淆/加密的信息中心包含恶意软件中并使用**Windows API**，则在操作之前或之后尝试检测恶意行为，可能会取得比分析加载的库或API调用执行更好的结果。
+- 如果使用**脚本**，则需要收集脚本进行分析。
+- 对**执行过程和命令行**监视，以检测与脚本和系统实用程序有关的潜在恶意行为（如certutil）。
+- 监视**常见存档文件应用扩展程序**（如Zip和RAR存档工具的应用和扩展程序）的执行文件路径和命令行参数，并与其他可疑行为关联，以减少来自正常用户和管理员行为的误报。
+***
+### Disabling Security Tools (瘫痪安全服务) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1809/)
+
+## 背景
+- 攻击者可能会禁用安全服务工具，以避免对其检测。
+
+## 利用场景
+- 关闭安全软件或事件日志记录过程；
+- 删除注册表项，导致工具不会在运行时启动；
+- 或采取其他方法来干扰安全扫描或事件报告。
+
+## 防御方式
+缓解|描述
+:--:|:--
+文件目录权限|确保适当的进程、注册表和文件权限配置
+用户帐号权限|确保用户权限配置最小化
+## 检测
+- 监视**进程和命令行参数**以查看安全工具是否被杀死或停止运行。
+- 监视**注册表编辑器**，是否有对与安全工具相关服务项和启动程序的修改。
+- 安全工具缺少日志或事件文件报告。
+
+***
+
+### DLL Search Order Hijacking (DLL搜索顺序劫持) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1038/)
+同3 Privilege Escalation
+***
+
+
+### DLL Side-Loading (DLL旁路加载) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T/)
 
 ## 背景
+- 程序可以运行时加载指定的的DLL。错误与模糊的指定会产生问题。
+- 当WinSxS(Windows并行清单)对要加载的DLL的特性不够明确时，会发生旁加载漏洞。
+- 攻击者可能会利用容易受到侧向加载的合法程序来加载恶意DLL。
 
 ## 利用场景
+- 合法受信的系统软件进程中，掩盖执行的操作。
 
-## 缓解
+## 防御方式
 缓解|描述
 :--:|:--
+审计|使用Windows的sxstrace.exe以及手动检查，检测清单文件中是否存在软件旁路加载漏洞。
+文件目录权限|在写保护位置安装软件。
+更新|定期对系统与软件进行更新。
 
 ## 检测
+- 监视进程是否存在异常活动（如不使用网络的进程连接网络）。
+- 跟踪DLL的元数据（如哈希），并将在进程执行时加载的DLL与以前的执行进行比较，检测与补丁或更新无关的可疑差异。
 
-### Deobfuscate/Decode Files or Information
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Execution Guardrails (执行边界) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1480/)
 
 ## 背景
+- 执行边界会根据目标特定环境存在的特定条件来限制执行操作。确保仅对预定目标执行payload，并减少附带损害。
+- 攻击者提供有关目标系统或环境的边界值，可能包括特定网络共享名称，附加物理设备，文件，已加入的Active Directory（AD）域，本地/外部IP地址等。
 
 ## 利用场景
+- **环境密钥 Environmental keying**
+  - 环境密钥是一种类型的护栏，用于从给定计算环境的特定值生成加/密密钥的加密技术。参数从给定环境的特定元素派生，并用于为加密的payload生成解密密钥。
+  - 参数可以从**特定**的网络共享、物理设备、软件/软件版本、文件、已加入的AD域、系统时间、本地/外部IP地址等元素中**得出**，通过参数**生成解密密钥**。
+  - 将**加密的payload**传递给目标，该目标将在执行之前使用目标的特定参数来解密有效负载。
+  - 环境密钥可以使**沙箱检测、反病毒检测、众测和逆向工程**等变得困难。以减慢事件响应速度，并帮助对手隐藏TTP(tactics, techniques, and procedures 战术，技术和程序)。
+- 通过利用特定于目标的值解密有效载荷，攻击者可以避免将解密密钥与payload一起打包或通过**潜在受监控的网络**连接发送，并且给payload**逆向**带来困难。
+- 通常，护栏被用于控制恶意程序的运行环境与限制损害程度/范围，以**避免暴露**。
+- 不同于典型的虚拟化/沙盒逃避，护栏根据可以做出**是否进一步参与**的决定，因为其指定的是针对特定目标的价值条件，而不是使其在任何环境中执行功能。
 
-## 缓解
-缓解|描述
-:--:|:--
-
-## 检测
-
-### Disabling Security Tools
->[原文链接](https://attack.mitre.org/techniques/T/)
-
-## 背景
-
-## 利用场景
-
-## 缓解
-缓解|描述
-:--:|:--
+## 防御方式
+- 执行护栏很难通过预防性控制减轻，因为它能保护目标外的数据不受损害。
+- 如果应保护的目标明确，则要致力于防止攻击工具在攻击链中更早的运行，并在受到损害时识别后续恶意行为。
 
 ## 检测
-
-### DLL Search Order Hijacking
->[原文链接](https://attack.mitre.org/techniques/T/)
-
-## 背景
-
-## 利用场景
-
-## 缓解
-缓解|描述
-:--:|:--
-
-## 检测
-
-### DLL Side-Loading
->[原文链接](https://attack.mitre.org/techniques/T/)
-
-## 背景
-
-## 利用场景
-
-## 缓解
-缓解|描述
-:--:|:--
-
-## 检测
-
-### Execution Guardrails
->[原文链接](https://attack.mitre.org/techniques/T/)
-
-## 背景
-
-## 利用场景
-
-## 缓解
-缓解|描述
-:--:|:--
-
-## 检测
+- 监视在收集各种系统信息或执行其他形式信息收集（特别是在短时间内）的可疑进程。
 
 ### Exploitation for Defense Evasion
 >[原文链接](https://attack.mitre.org/techniques/T/)
@@ -439,7 +480,7 @@
 
 ## 利用场景
 
-## 缓解
+## 防御方式
 缓解|描述
 :--:|:--
 
@@ -452,7 +493,7 @@
 
 ## 利用场景
 
-## 缓解
+## 防御方式
 缓解|描述
 :--:|:--
 
@@ -465,7 +506,7 @@
 
 ## 利用场景
 
-## 缓解
+## 防御方式
 缓解|描述
 :--:|:--
 
@@ -478,7 +519,7 @@
 
 ## 利用场景
 
-## 缓解
+## 防御方式
 缓解|描述
 :--:|:--
 
