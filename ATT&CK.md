@@ -1717,7 +1717,7 @@ ShellExecuteExA() & ShellExecuteExW()
 
 ## Defense Evasion (防御规避)
 
->攻击者试图避免被发现。
+>[攻击者正试图隐藏](https://attack.mitre.org/tactics/TA0005)
 
 **防御规避** 是指攻击者在**整条攻击链**中避免被发现的技术。包括**免杀**(uninstalling/disabling 卸载/瘫痪安全软件)和**加固**(obfuscating/encrypting 混淆/加密脚本和数据)，攻击者同样**武器化**利用受信任的进程来隐藏和伪装恶意软件。
 
