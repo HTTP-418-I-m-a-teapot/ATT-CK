@@ -1125,6 +1125,8 @@ ShellExecuteExA() & ShellExecuteExW()
 
 ### Local Job Scheduling (本地作业调度)
 
+>[原文链接](https://attack.mitre.org/techniques/T1168/)
+
 在 **Linux** 和 **macOS** 系统上，支持多种方法可以创建预定和定期的后台作业：**cron** 、 **at** 和 **launchd**。与 Windows 系统上的 **调度任务** 不同，基于 linux 的系统上的作业调度不能远程完成，除非与已建立的远程会话 (如 secure shell (SSH))结合使用。
 
 #### cron
