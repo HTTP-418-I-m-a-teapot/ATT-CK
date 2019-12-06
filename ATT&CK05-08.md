@@ -24,7 +24,7 @@
 
 ***
 
-## Access Token Manipulation (应用程序访问令牌) (SaaS&Office 365)
+## Application Access Token (应用程序访问令牌) (SaaS&Office 365)
 >[原文链接](https://attack.mitre.org/techniques/T1527/)
 
 同8 Lateral Movement
@@ -568,30 +568,117 @@
 
 ***
 
-### File System Logical Offsets
+### File System Logical Offsets (文件系统逻辑偏移) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1006/)
 ## 背景
+- Windows允许程序直接访问逻辑卷。
+- 具有直接访问权限的程序可以通过分析文件系统数据结构直接从驱动器读取和写入文件。
   
 ## 利用场景
+- 绕过**Windows文件访问控制**以及**文件系统监视工具**。
+- 如NinjaCopy可以在**PowerShell中执行**这些操作。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- **监视句柄handle**，仅在进程创建的驱动器卷上打开，以确定它们何时可以直接访问逻辑驱动器
+- **监视进程与命令行参数** ，检测可以从逻辑驱动器复制文件并逃避常见文件系统保护的操作
+- 对**PowerShell脚本**进行额外的**日志记录**。
+
+## 补充
+- 句柄
+  - 一个句柄是指使用的一个唯一的整数值，即一个4字节(64位程序中为8字节)长的数值，来标识应用程序中的不同对象和同类中的不同的实例，如，一个窗口，按钮，图标，滚动条，输出设备，控件或者文件等。
+  - 应用程序能够通过句柄访问相应的对象的信息，但是句柄不是指针，程序不能利用句柄来直接阅读文件中的信息。
+  - 如果句柄不在I/O文件中，它是毫无用处的。
+  - 句柄是Windows用来标志应用程序中建立的或是使用的唯一整数，Windows大量使用了句柄来标识对象。
+
+***
+
+### Gatekeeper Bypass (Mac门禁(Gatekeeper)绕过) (macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1144/)
+## 背景
+- 在macOS和OS X中，从Internet下载的应用程序或程序时在名为`com.apple.quarantine`的文件上设置了特殊属性。Apple Gatekeeper防御程序会在执行时读取此属性，并向用户提示是否允许执行。
+- 可以通过`xattr`命令`xattr/path/to/MyApp.app for com.apple.quartiance`检查隔离标志的存在。
+- 给定sudo权限，这个属性可以用`xattr`删除，`sudo xattr -r -d com.apple.quarantine /path/to/MyApp.app`。
+
+  
+## 利用场景
+- 从USB闪存、光盘、外部硬盘驱动器和本地网络共享的驱动器，加载到系统上的应用程序不会设置此标志。此外，网站挂马/路过下载(drive-by download)等方式也不一定对其进行设置。
+- 给定sudo权限，这个属性可以用`xattr`删除，`sudo xattr -r -d com.apple.quarantine /path/to/MyApp.app`。
 
 ## 防御方式
 缓解|描述
 :--:|:--
+安装限制|设置阻止未通过Apple Store下载的应用程序运行
+
+## 检测
+- 监视`com.apple.quarantine`，由**用户**而不是操作系统**删除标志**的行为；
+- 监视如使用`xattr`**修改扩展文件属性**的程序尝试；
+- 将删除与修改行为与其他恶意事件相**关联**。
+
+***
+
+### Group Policy Modification
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+
+## 利用场景
+
+## 防御方式
 
 ## 检测
 
 ***
 
-### Gatekeeper Bypass
-
-### Group Policy Modification
-
 ### Hidden Files and Directories
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Hidden Users
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Hidden Window
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### HISTCONTROL
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Image File Execution Options Injection
 
