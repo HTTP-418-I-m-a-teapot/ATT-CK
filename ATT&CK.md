@@ -136,6 +136,7 @@
       - [背景](#%e8%83%8c%e6%99%af-2)
       - [利用场景](#%e5%88%a9%e7%94%a8%e5%9c%ba%e6%99%af)
       - [防御方式](#%e9%98%b2%e5%be%a1%e6%96%b9%e5%bc%8f-27)
+    - [检测手段](#%e6%a3%80%e6%b5%8b%e6%89%8b%e6%ae%b5-25)
     - [Create Account](#create-account)
     - [DLL Search Order Hijacking (DLL搜索顺序劫持)](#dll-search-order-hijacking-dll%e6%90%9c%e7%b4%a2%e9%a1%ba%e5%ba%8f%e5%8a%ab%e6%8c%81)
     - [Dylib Hijacking](#dylib-hijacking)
@@ -1367,7 +1368,7 @@ ShellExecuteExA() & ShellExecuteExW()
 
 - 属于系统功能滥用，无法简单缓解。
   
-###3 检测
+### 检测手段
 
 - **注册表**：搜索已被替换的注册表引用，即通过注册表操作将已知二进制路径替换为未知路径来检测COM劫持。
   - 即使某些第三方应用程序定义了用户COM对象，如果用户的`HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\`对象在机器之前被加载，则该项中的对象有可能是可疑的，应该进行调查。
