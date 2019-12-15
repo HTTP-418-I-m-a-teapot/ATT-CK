@@ -345,7 +345,7 @@
 ### Control Panel Items
 >[原文链接](https://attack.mitre.org/techniques/T1196/)
 
-同第二部分“执行”
+同第二部分“Executipn”
 
 ***
 ### DCShadow 影子DC(域控制器)
@@ -619,72 +619,154 @@
 
 ***
 
-### Group Policy Modification
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Group Policy Modification (组策略编辑)(Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1484/)
 ## 背景
-
+- 组策略允许集中管理 **Active Directory (AD,域控制器)** 中的用户和计算机设置。
+- **GPO (Group Policy Objects,组策略对象)** 是用于组策略设置的容器，该组策略设置由存储在可预测网络路径中的文件组成`\<DOMAIN>\SYSVOL\<DOMAIN>\Policies\`。
+- 默认情况下，域中的所有用户帐户都具有读取GPO的权限。可以将GPO访问控制权限（如写权限）分配给域中的特定用户或组。
 
 ## 利用场景
+- 恶意GPO修改可用于实施**计划任务Scheduled Task**，**禁用安全工具Disabling Security Tools**，**远程文件复制Remote File Copy**，**创建帐户Create Account**，**服务执行Service Execution**等。
+- 修改`<GPO_PATH>\Machine\Preferences\ScheduledTasks\ScheduledTasks.xml`，利用`New-GPOImmediateTask`等公开的脚本通过修改GPOs自动化创建恶意**计划任务**
+- 如在`<GPO_PATH>\MACHINE\Microsoft\Windows NT\SecEdit\GptTmpl.inf`中调整SeEnableDelegationPrivilege, 修改特定用户的权限以修改GPOs，实现完全控制的AD后门。
 
 ## 防御方式
+缓解|描述
+:--:|:--
+审计|使用如Bloodhound等审核工具来限制GPO权限滥用
+用户帐号管理|考虑实施WMI和安全筛选(security filtering)，调整GPO策略应用于哪些用户和计算机
 
 ## 检测
+- 使用Windows事件日志监视目录服务更改
+  - Event ID 5136 - A directory service object was modified 目录服务对象已被修改
+  - Event ID 5137 - A directory service object was created 目录服务对象已创建
+  - Event ID 5138 - A directory service object was undeleted 删除目录服务对象失败
+  - Event ID 5139 - A directory service object was moved 目录服务对象已移动
+  - Event ID 5141 - A directory service object was deleted 目录服务对象已删除
+- 识别GPO滥用通常会伴随的其他行为，
+   - 如“计划任务”，将与之关联的事件得以检测。
+   - 也可以在与分配给新登录的特权（Event ID 4672）和用户权限的分配（Event ID 4704）相关的事件中搜索随后的权限修改
+   - 对SeEnableDelegationPrivilege的修改。
+
+## 补充
+- **WMI**(Windows Management Instrumentation,Windows管理规范)是一项核心的 Windows 管理技术；用户可以使用 WMI 管理本地和远程计算机。
 
 ***
 
 ### Hidden Files and Directories
->[原文链接](https://attack.mitre.org/techniques/T/)
-## 背景
+>[原文链接](https://attack.mitre.org/techniques/T1158/)
 
-## 利用场景
-
-## 防御方式
-
-## 检测
+同第四部分“Persistence”
 
 ***
 
-### Hidden Users
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Hidden Users (隐藏用户)(macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1147/)
 ## 背景
+- macOS中的每个用户帐户都有一个与之关联的用户ID。创建用户时，可以指定该帐户的用户ID。
+- `/Library/Preferences/com.apple.loginwindow`调用`Hide500Users`中有一个属性值，可防止用户ID为500和更低的用户出现在登录屏幕上。
 
 ## 利用场景
+- 通过使用用户ID低于500 的“ 创建帐户”技术并启用此属性（将其设置为“是”），对手可以更轻松地隐藏其用户帐户：`sudo dscl . -create /Users/username UniqueID 401`
 
 ## 防御方式
+缓解|描述
+:--:|:--
+操作系统配置|如果计算机加入了域，组策略可以帮助限制创建或隐藏用户的能力。阻止`/Library/Preferences/com.apple.loginwindow` `Hide500Users`值的修改将强制所有用户可见。
 
 ## 检测
+- 此技术可防止新用户出现在登录屏幕上，但新用户的所有其他标志仍然存在。如用户仍然获得home目录，并将出现在身份验证日志中。
 
 ***
 
-### Hidden Window
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Hidden Window (隐藏窗口)(All)
+>[原文链接](https://attack.mitre.org/techniques/T1143/)
 ## 背景
+- 在某些情况下，可以隐藏通常在应用程序执行时显示的窗口。系统管理员可以利用它来避免执行管理任务时影响用户的工作环境。
+- **Windows**
+  -Windows中的脚本语言如PowerShell，Jscript和VBScript可以使窗口隐藏。如`powershell.exe -WindowStyle Hidden`。
+- **Mac**
+  - 属性列表(plist)文件中列出了在macOS上运行的应用程序配置。
+  - 如`apple.awt.UIElement`允许Java应用程序阻止该应用程序的图标出现在Dock中。
+- **Linux**
+  - 安装了可视化桌面的Linux系统会有同样的问题。
 
 ## 利用场景
+- 攻击者可能滥用操作系统功能来向用户隐藏其他可见的窗口，以免提醒用户系统上的攻击者活动。
 
 ## 防御方式
+缓解|描述
+:--:|:--
+执行限制|使用防病毒软件限制或限制程序执行。在MacOS上，白名单程序带有plist标记，其他程序应视为可疑。
 
 ## 检测
+- 监视进程和命令行参数是否有指示隐藏窗口的操作。
+- 在Windows中，启用并配置事件日志记录和PowerShell日志记录以检查隐藏的窗口样式。
+- 在MacOS中，plist文件是具有特定格式的ASCII文本文件，因此它们相对容易解析。通过文件监视，检查`apple.awt.UIElementplist`中的和其他可疑plist文件中的plist标签并标记。
 
 ***
 
-### HISTCONTROL
->[原文链接](https://attack.mitre.org/techniques/T/)
+### HISTCONTROL (历史控制)(Linux&macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1148/)
 ## 背景
+- `HISTCONTROL`环境变量踪history命令应保存的内容，并在用户注销时保存在`~/.bash_history`中。
 
 ## 利用场景
+- 将`HISTCONTROL`设置为`ignorespace`，配置为忽略以空格开头的命令；
+- 将`HISTCONTROL`设置为`ignoredups`，配置为忽略重复的命令；
+- 在某些Linux系统中，默认情况下将`HISTCONTROL`设置为`ignoreboth`，包括前面两个配置。
+- `HISTCONTROL`在macOS上默认情况下不存在，但可由用户设置。
+
 
 ## 防御方式
+缓解|描述
+:--:|:--
+环境变量权限|防止用户更改`HISTCONTROL`环境变量。
+操作系统配置|将`HISTCONTROL`环境变量设置为"ignoredup"，而不是" ignoreboth"或"ignorespace"。
 
 ## 检测
+- 基于行为
+  - 将用户会话与`.bash_history`中明显缺少新命令的用户相关联。
+  - 用户检查或更改其`HISTCONTROL`环境变量。
 
 ***
 
 ### Image File Execution Options Injection
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Indicator Blocking
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
 
-### Indicator Removal from Tools	
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
+
+### Indicator Removal from Tools
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Indicator Removal on Host
 
