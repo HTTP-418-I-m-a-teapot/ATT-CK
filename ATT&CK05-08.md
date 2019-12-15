@@ -469,12 +469,11 @@
 ## 检测
 - 监视在收集各种系统信息或执行其他形式信息收集（特别是在短时间内）的可疑进程。
 
-## 补充
-- **环境密钥 Environmental keying**
-  - 环境密钥是一种类型的护栏，用于从给定计算环境的特定值生成加/密密钥的加密技术。参数从给定环境的特定元素派生，并用于为加密的payload生成解密密钥。
-  - 参数可以从**特定**的网络共享、物理设备、软件/软件版本、文件、已加入的AD域、系统时间、本地/外部IP地址等元素中**得出**，通过参数**生成解密密钥**。
-  - 将**加密的payload**传递给目标，该目标将在执行之前使用目标的特定参数来解密有效负载。
-  - 环境密钥可以使**沙箱检测、反病毒检测、众测和逆向工程**等变得困难。以减慢事件响应速度，并帮助对手隐藏TTP(tactics, techniques, and procedures 战术，技术和程序)。
+## 补充：环境密钥 Environmental keying
+- 环境密钥是一种类型的护栏，用于从给定计算环境的特定值生成加/密密钥的加密技术。参数从给定环境的特定元素派生，并用于为加密的payload生成解密密钥。
+- 参数可以从**特定**的网络共享、物理设备、软件/软件版本、文件、已加入的AD域、系统时间、本地/外部IP地址等元素中**得出**，通过参数**生成解密密钥**。
+- 将**加密的payload**传递给目标，该目标将在执行之前使用目标的特定参数来解密有效负载。
+- 环境密钥可以使**沙箱检测、反病毒检测、众测和逆向工程**等变得困难。以减慢事件响应速度，并帮助对手隐藏TTP(tactics, techniques, and procedures 战术，技术和程序)。
 
 ***
 
@@ -504,11 +503,10 @@
   - 成功率不高，可能导致软件运行不稳定或崩溃；
   - 磁盘可疑行为、试图隐藏的进程注入等漏洞成功利用的特征。
 
-## 补充
-- 微分段技术
-  - [相关链接](https://www.jianshu.com/p/1921a32afd19)
-  - 微分段(Micro-segmentation)是随着网络虚拟化提出的一种安全技术，通过应用该技术，能够提供在工作负载级别(workload level)上使能精细安全策略控制来保障用户业务安全。
-  - 使用微分段技术的一个显著好处就是能够将安全能力集成到虚拟化工作负载中，无须硬件设备(硬件防火墙）介入，也意味着将安全策略集成到虚拟网络(virtual network)、虚拟主机(VM)、操作系统以及其他虚拟安全实例中来提供安全。
+## 补充：微分段技术
+- [相关链接](https://www.jianshu.com/p/1921a32afd19)
+- 微分段(Micro-segmentation)是随着网络虚拟化提出的一种安全技术，通过应用该技术，能够提供在工作负载级别(workload level)上使能精细安全策略控制来保障用户业务安全。
+- 使用微分段技术的一个显著好处就是能够将安全能力集成到虚拟化工作负载中，无须硬件设备(硬件防火墙）介入，也意味着将安全策略集成到虚拟网络(virtual network)、虚拟主机(VM)、操作系统以及其他虚拟安全实例中来提供安全。
 
 ***
 
@@ -539,7 +537,7 @@
 - 对包含关键二进制/配置文件的文件夹，启用文件/目录权限**更改审核**。
 - **审计Windows安全日志**（`Event ID 4670`)。
 
-## 补充
+## 补充：SD&安全标识符&ACL
 - **SD**：在Windows系统中，用一个安全描述符((Secrity Descriptors)的结构来保存其权限的设置信息，简称为SD，在Windows SDK中的结构名是SECURITY DESCRIPTOR", 是包括了安全设置信息的结构体。一个安全描述符包含以下信息:
   - **安全标识符**(Security dentifiers),用于记录安全对象的ID。简称为SID。
   - **DACL**(Discretionary Access ControlList,自由访问控制列表)，指出了允许和拒绝某用户或组的存取控制列表。当一个进程需要访问安全对象，系统就会检查DACL来决定进程的访问权。如果一个对象没有DACL,那么任何人都可以拥有完全的访问权限。
@@ -586,12 +584,11 @@
 - **监视进程与命令行参数** ，检测可以从逻辑驱动器复制文件并逃避常见文件系统保护的操作
 - 对**PowerShell脚本**进行额外的**日志记录**。
 
-## 补充
-- 句柄
-  - 一个句柄是指使用的一个唯一的整数值，即一个4字节(64位程序中为8字节)长的数值，来标识应用程序中的不同对象和同类中的不同的实例，如，一个窗口，按钮，图标，滚动条，输出设备，控件或者文件等。
-  - 应用程序能够通过句柄访问相应的对象的信息，但是句柄不是指针，程序不能利用句柄来直接阅读文件中的信息。
-  - 如果句柄不在I/O文件中，它是毫无用处的。
-  - 句柄是Windows用来标志应用程序中建立的或是使用的唯一整数，Windows大量使用了句柄来标识对象。
+## 补充：句柄
+- 一个句柄是指使用的一个唯一的整数值，即一个4字节(64位程序中为8字节)长的数值，来标识应用程序中的不同对象和同类中的不同的实例，如，一个窗口，按钮，图标，滚动条，输出设备，控件或者文件等。
+- 应用程序能够通过句柄访问相应的对象的信息，但是句柄不是指针，程序不能利用句柄来直接阅读文件中的信息。
+- 如果句柄不在I/O文件中，它是毫无用处的。
+- 句柄是Windows用来标志应用程序中建立的或是使用的唯一整数，Windows大量使用了句柄来标识对象。
 
 ***
 
@@ -649,19 +646,19 @@
    - 也可以在与分配给新登录的特权（Event ID 4672）和用户权限的分配（Event ID 4704）相关的事件中搜索随后的权限修改
    - 对SeEnableDelegationPrivilege的修改。
 
-## 补充
+## 补充：WMI
 - **WMI**(Windows Management Instrumentation,Windows管理规范)是一项核心的 Windows 管理技术；用户可以使用 WMI 管理本地和远程计算机。
 
 ***
 
-### Hidden Files and Directories
+### Hidden Files and Directories (隐藏文件/目录) (All)
 >[原文链接](https://attack.mitre.org/techniques/T1158/)
 
 同第四部分“Persistence”
 
 ***
 
-### Hidden Users (隐藏用户)(macOS)
+### Hidden Users (隐藏用户) (macOS)
 >[原文链接](https://attack.mitre.org/techniques/T1147/)
 ## 背景
 - macOS中的每个用户帐户都有一个与之关联的用户ID。创建用户时，可以指定该帐户的用户ID。
@@ -680,7 +677,7 @@
 
 ***
 
-### Hidden Window (隐藏窗口)(All)
+### Hidden Window (隐藏窗口) (All)
 >[原文链接](https://attack.mitre.org/techniques/T1143/)
 ## 背景
 - 在某些情况下，可以隐藏通常在应用程序执行时显示的窗口。系统管理员可以利用它来避免执行管理任务时影响用户的工作环境。
@@ -701,13 +698,13 @@
 执行限制|使用防病毒软件限制或限制程序执行。在MacOS上，白名单程序带有plist标记，其他程序应视为可疑。
 
 ## 检测
-- 监视进程和命令行参数是否有指示隐藏窗口的操作。
-- 在Windows中，启用并配置事件日志记录和PowerShell日志记录以检查隐藏的窗口样式。
-- 在MacOS中，plist文件是具有特定格式的ASCII文本文件，因此它们相对容易解析。通过文件监视，检查`apple.awt.UIElementplist`中的和其他可疑plist文件中的plist标签并标记。
+- **监视进程和命令行参数**是否有指示隐藏窗口的操作。
+- 在**Windows**中，**启用并配置事件日志记录和PowerShell日志记录**以检查隐藏的窗口样式。
+- 在**MacOS**中，plist文件是具有特定格式的ASCII文本文件，因此它们相对容易解析。通过**文件监视**，检查`apple.awt.UIElementplist`中的和其他可疑plist文件中的plist标签并标记。
 
 ***
 
-### HISTCONTROL (历史控制)(Linux&macOS)
+### HISTCONTROL (历史控制) (Linux&macOS)
 >[原文链接](https://attack.mitre.org/techniques/T1148/)
 ## 背景
 - `HISTCONTROL`环境变量踪history命令应保存的内容，并在用户注销时保存在`~/.bash_history`中。
@@ -732,47 +729,123 @@
 
 ***
 
-### Image File Execution Options Injection
->[原文链接](https://attack.mitre.org/techniques/T/)
-## 背景
+### Image File Execution Options Injection (图像文件执行选项注入) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1183/)
 
-## 利用场景
-
-## 防御方式
-
-## 检测
+同第三部分“Persistence”
 
 ***
 
-### Indicator Blocking
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Indicator Blocking (阻断指标收集) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1054/)
 ## 背景
+- 攻击者可能试图阻止通常由传感器捕获的指标或事件被收集和分析。
 
 ## 利用场景
+- **恶意篡改**，通过篡改事件记录或控制数据监视的设置，**禁用主机传感器**，如Windows事件跟踪(ETW)，这些设置可能存储在系统中的配置文件和注册表中，也可以通过如PowerShell或Windows Management Instrumentation等进行访问。
+- 通过多种方式来实现**ETW中断**，但最直接的方法是使用`PowerShell Set-EtwTraceProvider cmdlet`定义条件，或直接与注册表交互以进行更改。
+- 对于基于网络的指标报告中，**阻止与报告相关的流量**，以防止集中分析。如停止负责转发本地监控的进程，或创建基于主机的防火墙规则以阻止流量流向负责汇总事件的特定主机(SIEM)。
 
 ## 防御方式
+缓解|描述
+:--:|:--
+访问控制|使用适当的权限和访问控制来保护事件跟踪器/转发器、防火墙策略和其他关联的机制。
+软件配置|以周期性间隔（如时间/登录等）自动重启转发，并将适当的更改管理应用于防火墙规则和其他相关系统配置。
+用户帐号管理|确保事件跟踪器/转发器、防火墙策略和其他关联的机制受到适当权限和访问控制的保护，且不能被用户帐户操纵。
 
 ## 检测
+- 从主机传感器**检测缺少报告的活动**。如突然停止或仅报告部分类型数据。
+- 根据收集的主机信息的类型，**检测触发进程停止或连接被阻止的事件**。
+- Sysmon将在其配置状态已更改(Event ID 16)时记录日志
+- WMI(Windows Management Instrumentation,Windows管理工具)可以用于订阅ETW提供程序，该日志记录特定跟踪会话中提供删除服务的任何程序。
+- 通过监视注册表项，检测ETW中的更改`HKLM\SYSTEM\CurrentControlSet\Control\WMI\Autologger\AUTOLOGGER_NAME{{PROVIDER_GUID}}`
 
 ***
 
-### Indicator Removal from Tools
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Indicator Removal from Tools (删除导致检测的指标) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1066/)
 ## 背景
+- 如果恶意软件被检测和隔离，或通过其他方式被缓解，攻击者可能借此**确定恶意工具被检测到的原因**（指标）。
+- 通过**删除指标**来修改和升级工具，以**规避再次检测**和**绕过使用相同检测机制**的设备。
 
 ## 利用场景
+- 当恶意程序因文件签名被隔离，通过软件打包 Software Packing 等方式改变文件签名，之后重用。
 
 ## 防御方式
+- 属于系统功能滥用，无法简单缓解。
 
 ## 检测
+- 将**初始检测**视为潜在危害更大入侵的**指示**，**假设威胁事件不单一存在**，与其他可能的入侵行为相关联。
 
 ***
 
-### Indicator Removal on Host
+### Indicator Removal on Host (删除主机中收集的指标) (All)
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+- 攻击者可能会**删除或更改主机系统上生成的工件**，包括日志和可能捕获到的文件如隔离区的恶意软件。
+
+## 利用场景
+- 删除日志，如典型的Windows事件或Linux/macOS文件Bash History和/ var / log / *）。
+- 干扰事件记录和其他用于入侵活动检测通知的操作可能会损害安全解决方案的完整性，**导致事件无法报告**。
+- 由于缺乏足够的数据来确定发生了什么，也可能**使深度分析和事件响应变得困难**。
+
+## 防御方式
+缓解|描述
+:--:|:--
+敏感信息加密|在本地和传输过程中对Event文件进行混淆/加密，避免向对手提供反馈。
+远程数据存储|将事件自动转发到日志服务器或存储数据库，防止攻击者在本地系统上定位和操纵数据的情况。尽量减少事件报告的时间延迟，避免在本地系统上长时间存储。
+文件/目录访问控制|使用适当的权限和身份验证保护在本地存储的生成的Event文件，并通过防止特权升级来限制攻击者提权概率。
+
+## 检测
+- 通过文件系统监视，检测指标文件的删除或修改。
+- 如删除Windows事件日志(通过本机二进制文件、API函数或PowerShell)可能会生成事件(事件ID 1102：“清除了审计日志”`Event ID 1102: "The audit log was cleared"` ).
+
+## 补充：Windows事件日志
+  - Windows事件日志是计算机警报和通知的记录。
+  - Microsoft将事件定义为“系统或程序中任何需要通知用户或将条目添加到日志的重大事件(any significant occurrence in the system or in a program that requires users to be notified or an entry added to a log)”
+  - 有三个系统定义的事件：系统System，应用程序Application和安全Security。
+  - 进行与帐户管理，帐户登录和目录服务访问等相关的操作的对手可以选择清除事件以隐藏其活动。
+  - 可以使用以下实用程序命令清除事件日志：
+    `wevtutil cl system`
+    `wevtutil cl application`
+    `wevtutil cl security`
+  - 日志也可以通过其他机制清除，例如PowerShell。
+  
+***
 
 ### Indirect Command Execution
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+
+## 利用场景
+
+
+## 防御方式
+
+
+## 检测
+
+
+
+
 
 ### Install Root Certificate
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+
+## 利用场景
+
+
+## 防御方式
+
+
+## 检测
+
+
+***
+
 
 ### InstallUtil
 
