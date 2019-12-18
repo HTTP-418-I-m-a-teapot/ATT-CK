@@ -813,45 +813,79 @@
   
 ***
 
-### Indirect Command Execution
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Indirect Command Execution (间接命令执行) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1202/)
 ## 背景
-
+- 可以使用各种Windows程序，**不调用cmd**执行命令。
 
 ## 利用场景
-
+- 攻击者可以滥用这些功能进行防御规避，**破坏检测**或**减轻**如组策略等限制cmd执行和与恶意payload相关的文件扩展名的机制的**控制**，导致**任意命令执行**
+- 如对于文件，使用程序兼容性助手(pcalua.exe)、适用于Windows的Linux子系统(WSL,Windows Subsystem for Linux)等组件及其他程序，可以从命令行界面、运行窗口或通过脚本**调用程序**和**命令执行**。
 
 ## 防御方式
-
+- 属于系统功能滥用，无法简单缓解。
 
 ## 检测
+- 监视和分析基于主机的检测机制中的日志(如Sysmon)，关注是与调用程序/命令/文件，或生成子进程/网络连接相关联的参数导致的进程创建等事件。
 
-
-
-
-
-### Install Root Certificate
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Install Root Certificate (安装根证书) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1130/)
 ## 背景
-
+- **根证书**在公钥加密中用于标识根证书颁发机构CA。安装根证书后，系统或应用程序将信任由根证书签名的根信任链中的证书。
+- 证书通常用于在Web浏览器中建立安全的TLS/SSL通信。当用户浏览提供不可信证书的网站时将显示错误消息，以警告用户安全风险。根据安全设置，浏览器可能不允许用户建立与该网站的连接。
 
 ## 利用场景
-
+- 攻击者可以在**脆弱的系统**上安装根证书，来**避免**系统连接到攻击者控制的服务器时的**安全警告**，诱导用户访问非法网站并窃取信息。
+- 在软件**供应链**中安装非典型证书，并与恶意软件或广告软件一同使用，提供**中间人攻击**的条件(拦截通过安全TLS/SSL通信传输的信息的能力)。
+- 根证书（及其关联的链）被**克隆和重新安装**的情况。克隆的证书链将携带许多与源相同的数据特征，并可用于**对恶意代码签名**，使恶意代码能绕过基于签名的安全工具(如Sysinternals、antivirus等)。
+- 在macOS中，Ay MaMi恶意软件通过`/usr/bin/security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /path/to/malicious/cert`将恶意证书作为受信任的根证书安装到系统keychain中。
 
 ## 防御方式
-
+缓解|描述
+:--:|:--
+操作系统配置|使用Windows组策略管理根证书，将`HKLM\SOFTWARE\Policies\Microsoft\SystemCertificates\Root\ProtectedRoots`的Flags值设置为1，以防止非管理员用户在自己的HKCU(每个用户的注册表项HKEY_CURRENT_USER)证书存储区中进行进一步根证书安装。
+软件配置|使用HTTP公钥锁定(HPKP)技术防止中间人攻击
 
 ## 检测
-
-
+- 监视可能的恶意活动在系统上安装的新证书(系统的根证书不太可能经常更改)。
+- 检查新系统上的预安装证书，以确保不存在不必要或可疑的证书。
+  - Microsoft在线并通过`authroot.stl`提供了可信任的根证书列表。
+  - 使用Sysinternals Sigcheck `sigcheck.exe -tuv` dump出证书存储的内容，并列出未在Microsoft证书信任列表的有效证书。
+- 已安装的根证书位于注册表中的`HKLM\SOFTWARE\Microsoft\EnterpriseCertificates\Root\Certificates\`和`[HKLM or HKCU]\Software[\Policies]\Microsoft\SystemCertificates\Root\Certificates\`。
+- 根证书的一个子集在Windows系统间是一致的，可用于比较：
+  - 18F7C1FCC3090203FD5BAA2F861A754976C8DD25
+  - 245C97DF7514E7CF2DF8BE72AE957B9E04741E85
+  - 3B1EFD3A66EA28B16697394703A72CA340A05BD5
+  - 7F88CD7223F3C813818C994614A89C99FA3B5247
+  - 8F43288AD272F3103B6FB1428485EA3014C0BCFE
+  - A43489159A520F0D93D032CCAF37E7FE20A8B419
+  - BE36A4562FB2EE05DBB3D32323ADF445084ED656
+  - CDD4EEAE6000AC7F40C3802C171E30148030C072
 ***
 
 
-### InstallUtil
+### InstallUtil (InstallUtil利用) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1118/)
 
-### Launchctl
+同第二部分“Execution”
+
+### Launchctl (Launchctl利用) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1152/)
+
+同第二部分“Execution”，第三部分"Persistence"
+
+***
 
 ### LC_MAIN Hijacking
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 利用场景
+
+
+## 防御方式
+
+
+## 检测
+
 
 ### Masquerading
 
