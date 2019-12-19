@@ -869,6 +869,8 @@
 
 同第二部分“Execution”
 
+***
+
 ### Launchctl (Launchctl利用) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1152/)
 
@@ -876,8 +878,32 @@
 
 ***
 
-### LC_MAIN Hijacking
+### LC_MAIN Hijacking (LC_MAIN劫持) (macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1149/)
+## 背景
+- 从OS X 10.8开始，mach-O二进制文件引入了一个名为LC_MAIN的新头文件，指向二进制文件的执行入口。
+- 之前的版本由 LC_THREAD 和 LC_UNIXTHREAD 两个标头实现。
+
+## 利用场景
+- 二进制文件的入口点可能被劫持，将初始执行流引到**恶意附加项**（另一个section或code cave），然后**返回到初始入口点**。
+- 通过以这种方式修改二进制文件，因为文件名和应用程序路径仍然相同，可以**绕过应用程序白名单**。
+
+## 防御方式
+缓解|描述
+:--:|:--
+代码签名|对所有应用程序上的签名代码强制使用有效的数字签名，并且仅使用来自受信任方签名的信任应用程序。
+
+## 检测
+- **校验和和签名验证**。修改LC_MAIN入口点或添加其他LC_MAIN入口点会使文件签名无效，并且可以检测到。
+- 收集正在运行的进程信息，并与已知的应用程序进行比较以查找可疑行为。
+
+***
+
+### Masquerading (伪装) (All)
 >[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+- 当可执行文件的名称或位置（合法的或恶意的）被操纵或滥用以逃避防御和观察时，就会出现伪装。
+
 ## 利用场景
 
 
@@ -887,9 +913,23 @@
 ## 检测
 
 
-### Masquerading
+***
 
 ### Modify Registry
+>[原文链接](https://attack.mitre.org/techniques/T/)
+## 背景
+
+
+## 利用场景
+
+
+## 防御方式
+
+
+## 检测
+
+
+***
 
 ### Mshta
 
