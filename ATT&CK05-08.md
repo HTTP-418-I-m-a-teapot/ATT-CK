@@ -900,44 +900,117 @@
 ***
 
 ### Masquerading (伪装) (All)
->[原文链接](https://attack.mitre.org/techniques/T/)
+>[原文链接](https://attack.mitre.org/techniques/T1036/)
 ## 背景
 - 当可执行文件的名称或位置（合法的或恶意的）被操纵或滥用以逃避防御和观察时，就会出现伪装。
 
 ## 利用场景
+- 将可执行文件放在通常受信任的目录中，或者伪造一个合法或无害的的受信程序名，以**绕过依赖文件名或路径信任可执行文件的工具**，并将文件名与被认为合法的内容相关联，使维护者和系统管理员认为文件是良性的。
+- 使用从右向左覆盖（**RTLO或RLO**）字符（U+202E）诱骗用户，执行被认为是良性但实际上是可执行代码的文件。
+- 攻击者可能会修改二进制文件的元数据，包括图标，版本，产品名称，描述和版权等字段，以更好地融入环境并增加欺骗安全分析人员或产品的机会。
+- **Windows**
+  - 使用合法实用程序（如rundll32.exe）的重命名副本。
+  - 将合法实用程序移至其他目录并重新命名以避免基于从非标准路径执行的系统实用程序的检测。
+  - 在`C:\Windows\System32`目录，赋予恶意文件受信任二进制名称，如explorer.exe、svchost.exe。
+- **Linux**
+  - 在启动之后将恶意二进制文件运行进程名称更改为受信或良性进程的名称。
+  - 在`/bin`目录，赋予恶意文件受信任二进制名称，如rsyncd、dbus-inotifier。
 
 
 ## 防御方式
-
+缓解|描述
+:--:|:--
+代码签名|二进制文件需要签名
+执行预防|使用需要文件名外属性的白名单工具限制程序执行
+访问控制|使用文件系统访问控制来保护文件夹如`C:\Windows\System32`等文件夹。
 
 ## 检测
+- 检查**文件哈希**，关注与预期的哈希值不匹配的文件。
+- 执行**文件监控**，关注具有已知名称但在不寻常位置的文件。
+- 检查在更新或补丁程序之外**修改的文件**.
+- 磁盘上的**文件名与二进制文件的PE元数据的文件名不匹配**(查看InternalName、OriginalFilename、ProductName)的情况，可能表示二进制文件在编译后已重命名。
+- 关注程序要使用的已知**命令行参数**而不是可能具有的名称，这些参数是不同的，因为它将具有更好的检测率。
+- 对于RTLO，检测文件名中**RTLO字符的通用格式**(如“\u202E”，“[U + 202E]”和“％E2％80％AE”)，并确保RTLO字符**不会被解释**，而是直接打印包含该字符的真实名称。
 
+## 补充 (RTLO)
+- RTLO是一个非打印字符，它会导致后面的文本**反向显示**。
+  - 如，一个名为March 25\u202Excod.scr的Windows屏幕保护程序文件将显示为March 25 rcs.docx。
+  - 名为photo_high_re\u202Egnp.js的JavaScript文件将显示为photo_high_resj.png。
+- 这种技术通常用于钓鱼附件，以欺骗最终用户和防御者。在许多有针对性的入侵企图和犯罪活动中都可以看到RTLO字符的使用。
+- RTLO也可以在Windows注册表中使用，其中regedit.exe显示相反的字符，但默认情况下命令行工具reg.exe不显示。
 
 ***
 
-### Modify Registry
->[原文链接](https://attack.mitre.org/techniques/T/)
+### Modify Registry (修改注册表) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1112/)
 ## 背景
+- 攻击者与Windows注册表进行交互，以在注册表项中**隐藏配置信息**、作为**清理**工作的一部分或作为**持久性Persistence**和**执行Execution**的一部分。
+- 访问注册表的特定区域取决于**帐户权限**，有些需要管理员级别的访问权限。
+- 内置的Windows命令行程序如**Reg**、包含通过Windows API与注册表交互的功能的程序如如**远程访问工具**，可用于本地或远程注册表修改，。
+  
+## 利用场景
+- 在注册表项中**隐藏配置信息**、作为**清理**工作的一部分或作为**持久性Persistence**和**执行Execution**的一部分。
+- 注册表修改还包括**隐藏key**的操作，如以空字符开头的key名称会导致错误或在使用Reg/其他使用Win32 API程序读取时被忽略。可以通过滥用伪隐藏的key来**隐藏**建立持久性的**payloads和命令**。
+- 远程修改系统的注册表，可以作为执行文件横向移动的一部分。它要求远程注册表服务在目标系统上运行，并通常需要**有效帐户**(Valid Accounts)，以及访问远程系统的**Windows管理员共享**(Windows Admin Shares)以进行RPC通信的权限。
 
+## 防御方式
+缓解|描述
+:--:|:--
+限制注册表权限|为注册表配置单元设置了适当的权限，防止用户修改可能导致权限提升的系统组件的键。
+
+## 检测
+- 监视**注册表行为**
+  - 对注册表的修改是正常的，并且通常在Windows操作系统的整个使用过程中进行。
+  - 对特定键启用**注册表审核**，以便在值发生更改时生成可警报事件`Event ID 4657`(使用Reghide或其他规避方法创建值时可能不会触发此事件)。
+  - 关注在Windows启动时加载与已知软件、程序补丁周期等不相关的软件的注册表项的**更改**
+  - 关注对启动文件夹中文件的**添加或更改**。
+  - 关注**创建新服务**和**修改**现有二进制**路径**指向的行为。如果更改了与服务相关的条目，则随后可以通过本地或远程服务启动或重启以执行文件。
+- 监视**进程和命令行参数**
+  - 具有内置功能的远程访问工具可以直接与Windows API交互以收集信息；
+  - 也可以通过Windows系统管理工具（如Windows Management Instrumentation和PowerShell）来获取信息；
+  - 在操作系统中配置其他日志记录功能，收集必要的信息以进行分析。
+- 监视与**隐藏注册表项**（如Reghide）关联的进程，命令行参数和API调用。使用本机Windows API调用或如Autoruns、RegDelNull等工具检查和清除恶意的隐藏注册表项。
+
+***
+
+### Mshta (Mshta利用) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1170/)
+
+同第二部分“Execution”
+
+***
+
+### Network Share Connection Removal (网络连接删除) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1126/)
+## 背景
+- 根据不同的网络环境，网络共享连接可能很常见。
+- 不再需要Windows共享驱动器和Windows Admin Shares连接时，可以将其删除。
+- Net是一个示例实用程序，可通过`net use \system\share /delete`命令删除网络共享连接。
+
+## 利用场景
+- 删除不再有用的共享连接，以**清除痕迹**。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 监视通过SMB建立和删除的与远程共享相关的网络使用命令的**命令行调用**，包括Windows管理共享Windows Admin Shares的最佳实践。
+- 捕获和解码系统之间的**SMB通信**，查找相关的网络共享会话和文件传输活动。
+- **Windows身份验证日志**可用于确定何时及哪个账户建立了已验证的网络共享，并可用于将网络共享活动与其他事件关联，以调查潜在恶意行为。
+
+***
+
+### NTFS File Attributes (NTFS属性) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1096/)
+## 背景
 
 ## 利用场景
 
-
 ## 防御方式
-
 
 ## 检测
 
-
 ***
-
-### Mshta
-
-### Network Share
-
-### Connection Removal
-
-### NTFS File Attributes
 
 ### Obfuscated Files or Information
 
@@ -1129,20 +1202,4 @@
 
 ### Windows Remote Management
 
-***
 
-## Collection
-
-***
-
-## Command and Control
-
-***
-
-## Exfiltration
-
-***
-
-## Impact
-
-***
