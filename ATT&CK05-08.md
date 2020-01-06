@@ -654,7 +654,7 @@
 ### Hidden Files and Directories (隐藏文件/目录) (All)
 >[原文链接](https://attack.mitre.org/techniques/T1158/)
 
-同第四部分“Persistence”
+同第三部分“Persistence”
 
 ***
 
@@ -1003,6 +1003,146 @@
 ### NTFS File Attributes (NTFS属性) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1096/)
 ## 背景
+- NTFS格式的分区都包含一个主文件表MFT，该表维护分区上每个文件/目录的记录。
+- MFT的条目为文件属性，如**扩展属性EA**和数据(存在多个数据属性时称为备用数据流ADS)，可用于存储任意数据甚至完整文件。
+
+## 利用场景
+- 攻击者可能会将恶意数据或二进制文件存储在**文件属性元数据**中，而不是直接存储在文件中。
+- 可以**规避**某些防御措施，例如静态指示器扫描工具和防病毒软件。
+
+## 防御方式
+缓解|描述
+:--:|:--
+限制文件和目录权限|调整NTFS EA的读写权限，(应该对此进行测试以确保不妨碍常规OS操作)。
+
+## 检测
+- **深度分析**技术来识别存储在NTFS EA中的信息。监视对ZwSetEaFile和ZwQueryEaFile Windows API函数的调用以及用于与EA交互的二进制文件，并考虑定期扫描是否存在已修改的信息。
+- 监视**使用Windows实用程序创建ads并与之交互**的方法。使用包含冒号的文件名监视操作（执行，副本等）。
+  - 一些语法（如`file.ext:ads[.ext]`）通常与ADS相关联。
+  - 有关可用于执行和创建ADS的实用程序的更详尽列表，请参见https://gist.github.com/api0cradle/cdd2d0d0ec9abb686f0e89306e277b8f。
+
+***
+
+### Obfuscated Files or Information (混淆的文件或信息) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1027/)
+## 背景
+- 攻击者可能试图通过加密，编码或其他方式混淆可执行文件或文件在系统中或传输中的内容，从而使其难以发现或分析。这是常见的行为，可以跨不同的平台和网络使用，以逃避防御。
+
+## 利用场景
+- Payload可能被**压缩，存档或加密**，以避免被检测到。这些payload可以在初始访问Initial Access期间和以后使用以减轻检测。
+  - 可能需要用户采取行动才能打开反混淆/解码的文件或信息，以供用户执行。
+  - 可能还要求用户输入密码以打开由攻击者提供的受密码保护的压缩/加密文件。
+  - 攻击者也可以使用压缩或存档脚本，如JS。
+- 对文件的某些部分进行**编码**以隐藏纯文本字符串。
+- 将Payload**拆分**为看似良性的单独文件，这些文件仅在重新组合后才会执行恶意功能。
+- **混淆**从Payload执行的**命令**或直接通过命令行界面执行的命令。环境变量，别名，字符和其他平台/语言特定的语义，可用于规避基于签名的检测和白名单机制。
+- **隐写术**，将消息或代码隐藏在图像，音轨，视频剪辑或文本文件中的技术。
+
+## 防御方式
+缓解|描述
+:--:|:--
+防病毒/反恶意软件|使用Windows 10上的反恶意软件扫描接口（AMSI）分析处理/解释后的命令。
+
+## 检测
+- 检测混淆文件的**恶意活动**。除非混淆过程留下了可以用签名检测到的中间产物，否则很难检测文件混淆。如果无法检测到混淆本身，则有可能检测到导致混淆文件的恶意活动（如用于在文件系统上写入、读取或修改文件的方法）。
+- 标记并分析包含**混淆指示符和已知可疑语法**（如未解释的转义字符'''^'''和'''"'''等）的命令。Windows'Sysmon和事件ID 4688显示进程的命令行参数。一些工具可以用来检测文件/Payload中的这些指标。
+- **在网络上检测**Payload中用于初始访问的混淆。使用NIPS和电子邮件网关过滤识别压缩和加密的附件脚本。某些电子邮件附件引爆系统可以打开压缩和加密的附件。通过加密连接从网站传递的Payload需要加密的网络流量检查。
+
+***
+
+### Parent PID Spoofing	(父级PID欺骗) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1502/)
+
+同第四部分“Privilege Escalation”
+***
+
+### Plist Modification (list修改) (macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1150/)
+
+同第三部分，“Persistence”、第四部分“Privilege Escalation”
+***
+
+### Port Knocking (端口试探) (Linux&macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1205/)
+
+同第三部分“Persistence”、第十部分“Command and Control”
+***
+
+### Process Doppelgänging (ProcessDoppelgänging代码注入) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1186/)
+## 背景
+- Black Hat欧洲2017大会上，两名来自enSilo公司的安全研究员介绍了一种新的代码注入技术,他们命名为“Process Doppelgänging”。
+- Vista中引入了Windows事务NTFS(**TxF**)为执行安全文件操作的方法。
+  - 为确保数据完整性，TxF仅允许一个事务处理的句柄在给定时间写入文件。
+  - 在写句柄事务终止之前，所有其他句柄均与编写器隔离，并且只能读取打开该句柄时存在的文件的提交版本；
+  - 为避免数据损坏，如果系统或应用程序在写事务期间失败，则TxF将执行自动回滚。
+  - 尽管已弃用，从Windows 10开始，仍启用了TxF应用程序的编程接口API。
+- ProcessDoppelgingäing分4个步骤实施：
+  - Transact，事务处理–使用合法的可执行文件创建TxF事务，然后使用恶意代码覆盖文件。这些更改将被隔离，并且仅在事务上下文中可见。
+  - Load，加载–创建内存的共享部分并加载恶意可执行文件。
+  - Rollback，回滚–撤消对原始可执行文件的更改，从而有效地从文件系统中删除恶意代码。
+  - Animate，执行–从内存的污染部分创建一个进程并启动执行。
+
+## 利用场景
+- 对手可以利用TxF来执行一个称为ProcessDoppelgingäing的**无文件的进程注入**变体。
+- 与进程空心化Process Hollowing类似，ProcessDoppelgingäing涉及替换合法进程的内存，从而允许**隐藏执行恶意代码**，这些代码可以逃避防御和检测。
+- ProcessDoppelgingäing使用TxF还**避免使用高度监控的API函数**，如NtUnmapViewOfSection、VirtualProtectEx和SetThreadContext。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+  
+## 检测
+- **监视和分析**对CreateTransaction，CreateFileTransacted，RollbackTransaction和其他很少使用的**表示TxF活动的函数的调用**。ProcessDoppelgingäing还通过调用一个过时的、未记录的Windows进程加载器实现，如对NtCreateProcessEx和NtCreateThreadEx的调用以及用于在另一个进程（如WriteProcessMemory）中的内存的API调用，
+- **扫描**在PsSetCreateProcessNotifyRoutine期间报告的**文件对象**，该文件对象在创建或删除进程时会触发回调，特别是寻找具有启用写访问权限的文件对象。还应考虑将内存中加载的文件对象与磁盘上的相应文件进行比较。
+- **分析进程行为**，以确定某个进程是否正在执行其通常不执行的操作，例如打开网络连接，读取文件或其他可能与破坏后行为(post-compromise behavior)相关的可疑操作。
+
+***
+
+### Process Hollowing (冷注入/进程空心化) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1093/)
+## 背景
+- 当在挂起状态下创建进程然后取消其内存映射并用恶意代码替换时，就会发生Process Hollowing。
+
+## 利用场景
+- 与进程注入类似，恶意代码的执行在合法进程下被屏蔽，并且可能**逃避防御和检测分析**。
+> [一个案例](https://www.freebuf.com/articles/system/154421.html)
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- **检测可以取消映射进程内存**的API调用（如ZwUnmapViewOfSection或NtUnmapViewOfSection）和**可以用于修改另一个进程内的内存**的API调用（如WriteProcessMemory）。
+- **分析进程行为**，以确定某个进程是否正在执行其通常不执行的操作，例如打开网络连接，读取文件或其他可能与破坏后行为(post-compromise behavior)相关的可疑操作。
+
+***
+
+### Process Injection
+>[原文链接](https://attack.mitre.org/techniques/T1055/)
+
+同第四部分“Privilege Escalation”
+***
+
+### Redundant Access
+>[原文链接](https://attack.mitre.org/techniques/T1108/)
+
+同第三部分“Persistence”
+***
+
+### Regsvcs/Regasm
+>[原文链接](https://attack.mitre.org/techniques/T1121/)
+
+同第二部分“Execution”
+***
+
+### Regsvr32
+>[原文链接](https://attack.mitre.org/techniques/T1117/)
+
+同第二部分“Execution”
+***
+
+### Rootkit
+>[原文链接](https://attack.mitre.org/techniques/T1014/)
+## 背景
 
 ## 利用场景
 
@@ -1012,55 +1152,124 @@
 
 ***
 
-### Obfuscated Files or Information
-
-### Parent PID Spoofing	
-
-### Plist Modification
-
-### Port Knocking
-
-### Process Doppelgänging
-
-### Process Hollowing
-
-### Process Injection
-
-### Redundant Access
-
-### Regsvcs/Regasm
-
-### Regsvr32
-
-### Rootkit
 
 ### Rundll32	
+>[原文链接](https://attack.mitre.org/techniques/T1085/)
+
+同第二部分“Execution”
+***
 
 ### Scripting
+>[原文链接](https://attack.mitre.org/techniques/T1064/)
+
+同第二部分“Execution”
+***
 
 ### Signed Binary Proxy Execution
+>[原文链接](https://attack.mitre.org/techniques/T1218/)
+
+同第二部分“Execution”
+***
 
 ### Signed Script Proxy Execution
+>[原文链接](https://attack.mitre.org/techniques/T1216/)
+
+同第二部分“Execution”
+***
 
 ### SIP and Trust Provider Hijacking
+>[原文链接](https://attack.mitre.org/techniques/T1198/)
+
+同第三部分“Persistence”
+***
 
 ### Software Packing
+>[原文链接](https://attack.mitre.org/techniques/T1045/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Space after Filename
+>[原文链接](https://attack.mitre.org/techniques/T1151/)
 
-### Template Injectio
+同第二部分“Execution”
+***
+
+### Template Injection
+>[原文链接](https://attack.mitre.org/techniques/T1221/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Timestomp
+>[原文链接](https://attack.mitre.org/techniques/T1099/)
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Trusted Developer Utilities
+>[原文链接](https://attack.mitre.org/techniques/T1127/)
+
+同第二部分“Execution”
+***
 
 ### Valid Accounts
+>[原文链接](https://attack.mitre.org/techniques/T1078/)
+
+同第一部分“Initial Access”、第三部分“Persistence”、第四部分“Privilege Escalation”
+***
 
 ### Virtualization/Sandbox Evasion
+>[原文链接](https://attack.mitre.org/techniques/T1497/)
+
+同第七部分“Discovery”
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### Web Service
+>[原文链接](https://attack.mitre.org/techniques/T1102/)
+
+同第十部分“Command And Control”
+## 背景
+
+## 利用场景
+
+## 防御方式
+
+## 检测
+
+***
 
 ### XSL Script Processing
+>[原文链接](https://attack.mitre.org/techniques/T1220/)
+
+同第二部分“Execution”
+***
 
 ***
 
