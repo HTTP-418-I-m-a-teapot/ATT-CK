@@ -1086,14 +1086,14 @@
 ## 利用场景
 - 对手可以利用TxF来执行一个称为ProcessDoppelgingäing的**无文件的进程注入**变体。
 - 与进程空心化Process Hollowing类似，ProcessDoppelgingäing涉及替换合法进程的内存，从而允许**隐藏执行恶意代码**，这些代码可以逃避防御和检测。
-- ProcessDoppelgingäing使用TxF还**避免使用高度监控的API函数**，如NtUnmapViewOfSection、VirtualProtectEx和SetThreadContext。
+- ProcessDoppelgingäing使用TxF还**避免使用高度监控的API函数**，如`NtUnmapViewOfSection`、`VirtualProtectEx`和`SetThreadContext`。
 
 ## 防御方式
 - 属于系统功能滥用，无法简单缓解。
   
 ## 检测
-- **监视和分析**对CreateTransaction，CreateFileTransacted，RollbackTransaction和其他很少使用的**表示TxF活动的函数的调用**。ProcessDoppelgingäing还通过调用一个过时的、未记录的Windows进程加载器实现，如对NtCreateProcessEx和NtCreateThreadEx的调用以及用于在另一个进程（如WriteProcessMemory）中的内存的API调用，
-- **扫描**在PsSetCreateProcessNotifyRoutine期间报告的**文件对象**，该文件对象在创建或删除进程时会触发回调，特别是寻找具有启用写访问权限的文件对象。还应考虑将内存中加载的文件对象与磁盘上的相应文件进行比较。
+- **监视和分析**对`CreateTransaction`，`CreateFileTransacted`，`RollbackTransaction`和其他很少使用的**表示TxF活动的函数的调用**。ProcessDoppelgingäing还通过调用一个过时的、未记录的Windows进程加载器实现，如对NtCreateProcessEx和NtCreateThreadEx的调用以及用于在另一个进程（如WriteProcessMemory）中的内存的API调用，
+- **扫描**在`PsSetCreateProcessNotifyRoutine`期间报告的**文件对象**，该文件对象在创建或删除进程时会触发回调，特别是寻找具有启用写访问权限的文件对象。还应考虑将内存中加载的文件对象与磁盘上的相应文件进行比较。
 - **分析进程行为**，以确定某个进程是否正在执行其通常不执行的操作，例如打开网络连接，读取文件或其他可能与破坏后行为(post-compromise behavior)相关的可疑操作。
 
 ***
@@ -1111,161 +1111,243 @@
 - 属于系统功能滥用，无法简单缓解。
 
 ## 检测
-- **检测可以取消映射进程内存**的API调用（如ZwUnmapViewOfSection或NtUnmapViewOfSection）和**可以用于修改另一个进程内的内存**的API调用（如WriteProcessMemory）。
+- **检测可以取消映射进程内存**的API调用（如`ZwUnmapViewOfSection`或`NtUnmapViewOfSection`）和**可以用于修改另一个进程内的内存**的API调用（如WriteProcessMemory）。
 - **分析进程行为**，以确定某个进程是否正在执行其通常不执行的操作，例如打开网络连接，读取文件或其他可能与破坏后行为(post-compromise behavior)相关的可疑操作。
 
 ***
 
-### Process Injection
+### Process Injection (进程注入) (All)
 >[原文链接](https://attack.mitre.org/techniques/T1055/)
 
 同第四部分“Privilege Escalation”
 ***
 
-### Redundant Access
+### Redundant Access (冗余访问) (All)
 >[原文链接](https://attack.mitre.org/techniques/T1108/)
 
 同第三部分“Persistence”
 ***
 
-### Regsvcs/Regasm
+### Regsvcs/Regasm (Regsvcs/Regasm武器化) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1121/)
 
 同第二部分“Execution”
 ***
 
-### Regsvr32
+### Regsvr32 (Regsvr32武器化) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1117/)
 
 同第二部分“Execution”
 ***
 
-### Rootkit
+### Rootkit (Rootkit) (All)
 >[原文链接](https://attack.mitre.org/techniques/T1014/)
 ## 背景
+- ROOTKITS是通过**拦截**（Hooking）和**修改**提供系统信息的操作系统API调用来隐藏恶意软件的存在的程序。
+- Rootkits或rootkit启动点可以隐藏在操作系统或用户的**更底层**，包括管理程序、主引导记录和系统固件。
 
 ## 利用场景
+- 攻击者可能使用rootkit来**隐藏**程序，文件，网络连接，服务，驱动程序和其他系统组件的存在。
+- 目前已经在Windows，Linux和MacOS X系统上有发现Rootkit。
 
 ## 防御方式
+- 属于系统功能滥用，无法简单缓解。
 
 ## 检测
+- 某些rootkit保护功能可能**内置**在防病毒或操作系统软件中。
+- 有专用的**rootkit检测工具**可查找特定类型的rootkit行为。
+- **监视**是否存在**无法识别**的DLL，设备，服务以及对MBR的更改。
 
 ***
 
-
-### Rundll32	
+### Rundll32	(Regsvr32武器化) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1085/)
 
 同第二部分“Execution”
 ***
 
-### Scripting
+### Scripting (恶意脚本) (All)
 >[原文链接](https://attack.mitre.org/techniques/T1064/)
 
 同第二部分“Execution”
 ***
 
-### Signed Binary Proxy Execution
+### Signed Binary Proxy Execution (签名的二进制程序代理执行) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1218/)
 
 同第二部分“Execution”
 ***
 
-### Signed Script Proxy Execution
+### Signed Script Proxy Execution (签名的脚本代理执行) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1216/)
 
 同第二部分“Execution”
 ***
 
-### SIP and Trust Provider Hijacking
+### SIP and Trust Provider Hijacking (SIP和受信供应链劫持)(Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1198/)
 
 同第三部分“Persistence”
 ***
 
-### Software Packing
+### Software Packing (软件打包)(All)
 >[原文链接](https://attack.mitre.org/techniques/T1045/)
 ## 背景
+- 软件打包是一种**压缩和加密**可执行文件的方法。打包可执行文件会**改变文件签名**，以避免基于签名的检测。
+- 大多数解压技术都将内存中的可执行代码解压缩。
+- 用于执行软件打包的实用程序称为打包程序，如MPRESS和UPX
+- [一个更全面的列表](https://en.wikipedia.org/wiki/Executable_compression)，但对手可能会创建自己的包装技术，
+- 攻击者可以使用**虚拟机软件保护**作为软件包的一种形式来保护其代码。虚拟机软件保护将可执行文件的原始代码转换为特殊格式，只有特殊的虚拟机才能运行。然后调用虚拟机来运行此代码。
 
 ## 利用场景
+- 软件打包是一种**压缩和加密**可执行文件的方法。打包可执行文件会**改变文件签名**，以避免基于签名的检测。
+- 攻击者可以使用**虚拟机软件保护**作为软件包的一种形式来保护其代码。虚拟机软件保护将可执行文件的原始代码转换为特殊格式，只有特殊的虚拟机才能运行。然后调用虚拟机来运行此代码。
 
 ## 防御方式
+缓解|描述
+:--:|:--
+防病毒/反恶意软件|采用基于启发式的恶意软件检测，并设置策略为检测的恶意软件创建自定义签名。
 
 ## 检测
+- 使用**文件扫描**来查找已知的软件打包程序或使用打包技术的文件。
+- 因为合法软件也可能会使用打包技术来减小二进制大小或保护专有代码。
 
 ***
 
-### Space after Filename
+### Space after Filename (文件名后加空格)(MacOS&Linux)
 >[原文链接](https://attack.mitre.org/techniques/T1151/)
 
 同第二部分“Execution”
 ***
 
-### Template Injection
+### Template Injection (模板注入)(Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1221/)
 ## 背景
+- Microsoft的Open Office XML(**OOXML**)规范为**Office文档**(.docx，xl​​sx，.pptx)定义了一种基于XML的格式，以替换较旧的二进制格式(.doc，.xls，.ppt)。
+- OOXML文件被打包在一起，压缩成各种XML文件（称为部分）的压缩文件，其中包含共同定义文档呈现方式的属性。
+- 部件中的属性可以引用通过**联机URL访问**的共享公共资源。例如，模板属性引用一个文件，用作加载文档时获取的预格式化文档蓝图。
 
 ## 利用场景
+- 攻击者可能会滥用该技术来**最初步的隐藏**要通过文档执行的恶意代码（Scripting）。加载到文档中的模板引用可以使Payload在加载文档时被获取并执行。
+- 这些文档可以通过其他技术（如网络钓鱼附件和/或污染共享内容）传播，并且可以**避免静态检测**，因为在获取Payload之前不存在典型的指标（VBA宏、脚本等）。
+- [示例](https://blog.malwarebytes.com/threat-analysis/2017/10/decoy-microsoft-word-document-delivers-malware-through-rat/)
+- 此技术还可以通过注入SMB/HTTPS（或其他凭据提示）URL并触发身份验证尝试来**启用强制身份验证**。
 
 ## 防御方式
+缓解|描述
+:--:|:--
+防病毒/反恶意软件|使用IPS、病毒防御系统和沙箱以防止文档获取和执行恶意Payload。
+禁用宏|禁用Microsoft Office宏/活动内容，以防止执行文档中的恶意Payload，但可能不会减少强制身份验证对此技术的使用。
+用户培训|培训对社交工程技术和钓鱼邮件的识别。
 
 ## 检测
+- 分析**进程行为**，以确定Office应用程序是否正在执行某些操作，例如打开网络连接，读取文件，产生异常的子进程（如PowerShell）或其他可能与入侵后行为相关的可疑操作。
 
 ***
 
-### Timestomp
+### Timestomp(修改时间戳)(All)
 >[原文链接](https://attack.mitre.org/techniques/T1099/)
 ## 背景
+- Timestomp是一种用于修改文件时间戳（修改，访问，创建和更改时间）的技术，通常是模仿同一文件夹中的文件。
 
 ## 利用场景
+- 在攻击者创建的文件上执行此操作，模仿同文件夹下其他文件，以**欺骗**调查人员和文件分析工具。
+- 与文件名伪装一起使用以**隐藏**恶意软件和工具。
 
 ## 防御方式
+- 属于系统功能滥用，无法简单缓解。
 
 ## 检测
+- 使用**文件修改监视**来检测时间戳，该技术收集监视收集有关文件句柄打开的信息，并可以比较时间戳值。
 
 ***
 
-### Trusted Developer Utilities
+### Trusted Developer Utilities (受信的开发人员实用程序)(Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1127/)
 
 同第二部分“Execution”
 ***
 
-### Valid Accounts
+### Valid Accounts(有效账户)(All)
 >[原文链接](https://attack.mitre.org/techniques/T1078/)
 
 同第一部分“Initial Access”、第三部分“Persistence”、第四部分“Privilege Escalation”
 ***
 
-### Virtualization/Sandbox Evasion
+### Virtualization/Sandbox Evasion(虚拟机/沙盒规避)(All)
 >[原文链接](https://attack.mitre.org/techniques/T1497/)
 
 同第七部分“Discovery”
 ## 背景
-
+- 攻击者可能会检查是否存在虚拟机环境（VME）或沙箱，以**避免工具和活动被检测到**。
+- 如果对手检测到VME，他们可能会**更改恶意软件**以**隐藏核心功能**或**脱离**。
+- 还可能在丢弃次要或其他有效载荷之前搜索VME工件，并在自动发现过程中使用规避过程中获得的信息来**塑造后续行为**。
+- 攻击者可以通过**搜索安全监视工具**（例如Sysinternals，Wireshark等）来使用包括安全软件发现在内的多种方法来完成虚拟化/沙盒逃避，以帮助确定其是否为分析环境。
+- 其他方法包括在恶意软件代码中使用睡眠计时器或循环，以避免在临时沙箱中进行操作。
+  
 ## 利用场景
+- **VME Artifacts工件发现**
+  - 使用Windows Management Instrumentation，PowerShell，Systeminfo和Query Registry之类的实用程序来获取系统信息并搜索VME工件。
+  - 在内存，进程，文件系统和/或注册表中搜索VME工件。
+  - 合并为一个检查脚本，然后在确定系统为虚拟环境时退出程序。
+  - 在VMWare之类的应用程序中，对手可以使用特殊的I / O端口发送命令并接收输出。
+  - 检查驱动器的大小。如使用Win32 DeviceIOControl函数。
+  - 注册表中的VME工件示例
+   `HKLM\SOFTWARE\Oracle\VirtualBox Guest Additions`
+    `HKLM\HARDWARE\Description\System\"SystemBiosVersion";"VMWARE"`
+    `HKLM\HARDWARE\ACPI\DSDT\BOX_`
+  - 系统上的示例VME文件和DLL [2]
+   `WINDOWS\system32\drivers\vmmouse.sys`
+   `WINDOWS\system32\vboxhook.dll`
+   `Windows\system32\vboxdisp.dll`
+  - 常规检查可能枚举这些应用程序所独有的正在运行的服务，系统上已安装的程序，与虚拟机应用程序有关的字符串的制造商/产品字段以及特定于VME的硬件/处理器指令。
+- **用户活动发现**
+  - 在主机上搜索用户活动（如浏览器历史记录，缓存，书签，主目录中的文件数等），以确保真实环境的安全。
+  - 通过用户交互和数字签名等方式来检测此类信息。
+  - 让恶意软件检查鼠标单击的速度和频率，以确定是否是沙盒环境。
+  - 依赖于特定的用户与系统的交互，如在激活宏之前等待文档关闭，等待用户双击嵌入式图像以激活等。
+- **虚拟硬件指纹发现**
+  - 检查系统的风扇和温度，以收集可以指示虚拟环境的证据。
+  - 使用WMI查询执行CPU检查`$q = "Select * from Win32_Fan" Get-WmiObject -Query $q`。如果结果返回的元素多于零，则该机器是一台物理机器。
 
 ## 防御方式
+- 属于系统功能滥用，无法简单缓解。
 
 ## 检测
+- 虚拟化、沙箱和相关的发现技术可能会在操作的第一步中出现，但也可能会在对手了解环境的整个过程中出现。
+- 根据获得的信息，将数据和事件视为可能导致其他活动（如横向运动）的**行为链**的一部分。
+- 监视生成的短时间内，收集各种系统信息，或执行其他形式的发现的**可疑进程**。
 
 ***
 
-### Web Service
+### Web Service (网络服务)(All)
 >[原文链接](https://attack.mitre.org/techniques/T1102/)
-
 同第十部分“Command And Control”
 ## 背景
+- 攻击者可以使用现有的合法外部Web服务作为将命令中继到受感染系统的手段。
 
 ## 利用场景
+- 这些命令还可以包括指向命令和控制（C2）基础结构的指针。
+- 对手可能会在死点解析器dead drop resolver（嵌入（通常是模糊/编码）域或IP地址的Web服务）上发布内容。被感染主机与服务器联系并被解析器重定向。
+- 流行网站和社交媒体可能会给C2机制提供大量的**掩护**，因为网络中的主机可能已经在协商前与它们进行了通信。使用如Google或Twitter提供的公共服务，攻击者更容易隐藏在预期的噪音中。
+- Web服务提供商通常使用SSL/TLS加密，为对手提供**额外的保护级别**。
+- 使用Web服务还可以通过恶意软件二进制分析保护后端C2基础设施不被发现，同时还可以启用操作**弹性**（因为该基础设施可能会动态更改）。
 
 ## 防御方式
-
+缓解|描述
+:--:|:--
+网络入侵防护|使用网络签名识别特定恶意软件流量，使用网络入侵检测和防御系统缓解网络级别的活动。
+限制基于Web的内容|Web代理可用于实施外部网络通信策略，以防止使用未经授权的外部服务。
 ## 检测
+- 使用网络连接来**关联**未知或可疑过程活动的主机数据。
+- 如果数据已加密，则数据包捕获分析将需要**SSL/TLS检查**。
+- 分析网络数据中**不常见的数据流**（例如客户端发送的数据明显多于从服务器接收的数据）。
+- **用户行为监视**有助于检测异常活动模式。
+- **分析数据包内容**以检测未遵循所使用端口的预期协议行为的通信
 
 ***
 
-### XSL Script Processing
+### XSL Script Processing(XSL脚本处理)(Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1220/)
 
 同第二部分“Execution”
