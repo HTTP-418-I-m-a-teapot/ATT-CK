@@ -17,7 +17,7 @@
 ### Access Token Manipulation (访问令牌操纵) (Windows)
 >[原文链接](https://attack.mitre.org/techniques/T1134/)
 
-#### 背景
+
 同3 Privilege Escalation
 
 
@@ -1357,37 +1357,490 @@
 
 ## Credential Access (凭证访问)
 
-### Account Manipulation
+>攻击者试图窃取账户和密码。
 
-### Bash History
 
-### Brute Force	
+**凭证访问**包括用于窃取登录凭据（如帐户名和密码）的技术。获取凭据的技术包括**密钥记录**和**凭证转储**。使用合法凭证的访问更难被发现，并可能给攻击者提供**创建更多帐户**的机会。
 
-### Credential Dumping
+***
 
-### Credentials from Web Browsers
+### Account Manipulation(账户操作)(All)
+>[原文链接](https://attack.mitre.org/techniques/T1098/)
 
-### Credentials in Files
+同第三部分“Persistence”
 
-### Credentials in Registry
+***
 
-### Exploitation for Credential Access
+### Bash History(Bash历史)(Linux&macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1139/)
 
-### Forced Authentication
+## 背景
+- Bash使用`history`跟踪用户在命令行上键入的命令。用户注销后，历史记录将刷新到用户的.bash_history文件中。
+- 对于每个用户，此文件位于相同的位置：`~/.bash_history`。通常，此文件跟踪用户的最后500个命令。
 
-### Hooking
+## 利用场景
+- 用户通常在命令行上输入用户名和密码作为程序的参数，然后在注销时将其保存到此文件中,攻击者可以通过在文件中查找潜在的凭据来滥用此功能。
 
-### Input Capture
+## 防御方式
+缓解|描述
+:--:|:--
+操作系统配置|防止用户的命令历史记录刷新到他们的`.bash_history`文件，包括使用以下命令的多种方法：`set +o history`并`set -o history`开启再次登录; 添加`unset HISTFILE`到用户的`.bash_rc`文件中；使用写命令`ln -s /dev/null ~/.bash_history`到`/dev/null`代替。
 
-### Input Prompt
+## 检测
+- 监视`.bash_history`**读取用户的时间**，可以帮助提醒可疑活动。- 监视**行为**，用户经常通过`history`而不是`cat ~/.bash_history`来访问历史记录。
 
-### Kerberoasting
+***
 
-### Keychain
+### Brute Force	(暴力破解)(All)
+>[原文链接](https://attack.mitre.org/techniques/T1110/)
+## 背景
+- 当密码未知或获得密码哈希时，对手可能会使用蛮力尝试访问帐户。
 
-### LLMNR/NBT-NS Poisoning and Relay
+## 利用场景
+- 系统地**计算散列**的密码的技术是可用的，或者对手可以使用预先计算的**彩虹表**来破解散列。通常在目标网络之外的敌方控制系统上完成。
+- 在不知道密码或散列的情况下**暴力破解**或尝试已知或可能的密码来**字典攻击**。这是一个风险更大的选项，取决于登录失败策略可能会导致身份验证失败和帐户锁定。
+- 一种相关的技术称为**密码喷涂（枚举用户）**password spraying，即使用一个可能是一个常用的密码的密码，或小密码列表（与域的复杂性策略相匹配）。尝试使用该密码和网络上的不同帐户进行登录，以避免使用多个密码强制单个帐户时通常会发生的帐户锁定。
+  - 通常，在进行密码喷涂时，会针对如下常用端口上的管理服务
+  - SSH (22/TCP)
+  - Telnet (23/TCP)
+  - FTP (21/TCP)
+  - NetBIOS / SMB / Samba (139/TCP & 445/TCP)
+  - LDAP (389/TCP)
+  - Kerberos (88/TCP)
+  - RDP/Terminal Services (3389/TCP)
+  - HTTP/HTTP Management Services (80/TCP & 443/TCP)
+  - MSSQL (1433/TCP)
+  - Oracle (1521/TCP)
+  - MySQL (3306/TCP)
+  - VNC (5900/TCP)
+- 除了管理服务之外，攻击者还会攻击单点登录SSO和云上应用，以及面向外部的电子邮件应用程序如Office365。
+  
+## 防御方式
+缓解|描述
+:--:|:--
+帐户使用策略|在一定数量的登录失败尝试之后设置**帐户锁定策略**以防止猜测密码。过于严格的策略可能会导致DOS，使暴力破解中使用的所有帐户均无法使用。
+多因素认证|使用**多因素身份验证**。尽可能在面向外部的服务上启用多因素身份验证。
+密码策略|创建密码策略时参考**[NIST准则](https://pages.nist.gov/800-63-3/sp800-63b.html)**。
 
-### Network Sniffing
+## 检测
+- 哈希爆破通常在目标网络范围之外进行，因此很难检测哈希何时被破解。
+- 监视**身份验证日志**，如果身份验证失败率很高，可能系统被攻击者暴力破解。
+- 监视**跨多个帐户的失败的身份验证尝试**，这些尝试可能是由于密码喷涂尝试导致的。
+- 域控制器DC: `Audit Logon` (Success & Failure) for `event ID 4625`.
+- 域控制器DC: : `Audit Kerberos Authentication Service` (Success & Failure) for `event ID 4771`.
+- 所有系统: `Audit Logon` (Success & Failure) for `event ID 4648`.
+- 在默认环境中，LDAP和Kerberos连接尝试不太可能通过SMB触发事件， 
+
+***
+
+### Credential Dumping (凭证转储) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1003/)
+## 背景
+- 凭据转储是从操作系统和软件**获取**帐户登录名和密码信息的过程（通常以哈希或明文密码的形式）。
+- 之后可以使用凭证执行**横向移动**并**访问**受限制的信息。
+
+## 利用场景
+- **Windows**
+  - **SAM** (Security Accounts Manager)
+    - SAM是一个**数据库文件**，其中包含主机的本地帐户。通常使用`net user`命令搜索。
+    - 要枚举SAM数据库，需要**system级别**的访问。
+    - 可使用多种工具通过内存中（in-memory）技术来检索SAM文件。
+    pwdumpx.exe
+    gsecdump
+    Mimikatz
+    secretsdump.py
+    - 可以使用Reg从注册表中提取SAM ：
+    `reg save HKLM\sam sam`
+    `reg save HKLM\system system`
+    - 然后可以使用Creddump7在本地处理SAM数据库以检索哈希。
+    - Rid 500是本地内置管理员。
+    - Rid 501是来宾帐户。
+    - RID 1,000+是用户帐户。
+  - **缓存的凭证**(Cached Credentials)
+    - 当域控制器不可用时，由Windows Vista和更新版本的缓存凭据使用的DCC2（域缓存凭据版本2）哈希。
+    - 默认缓存凭据的数目会有所不同，并且每个系统都可以更改此数目。
+    - 此哈希不允许传递哈希类型的攻击。
+    - 可以使用许多工具通过内存技术**检索SAM文件**。
+    pwdumpx.exe
+    gsecdump
+    Mimikatz
+    - 可以使用reg.exe从注册表中提取文件，并使用Creddump7收集凭据。
+    - Windows Vista的缓存凭据是使用PBKDF2派生的。
+  - **LSA Secrets** (Local Security Authority)
+    - 通过对主机的SYSTEM访问，LSA Secrets通常允许从本地帐户到基于域的帐户凭据的简单访问。。
+    - **注册表**用于存储LSA Secrets。在本地或域用户的上下文中运行服务时，其密码将存储在注册表中。如果启用了自动登录，则此信息也将存储在注册表中。
+    - 可以使用多种工具通过内存技术来**检索SAM文件**。
+    pwdumpx.exe
+    gsecdump
+    Mimikatz
+    secretsdump.py
+    - 可以使用reg.exe从注册表中提取文件，并使用Creddump7收集凭据。
+    - 注：该机制提取的密码是UTF-16编码的，这意味着它们以明文形式返回
+    - 注：Windows 10增加了对LSA机密的保护。
+  - **域控制器的NTDS** (NTDS from Domain Controller)
+    - 活动目录Active Directory存储有关域成员的信息，包括用于验证凭据和定义访问权限的设备和用户。
+    - 活动目录域数据库存储在`NTDS.dit`文件中。默认情况下，NTDS文件将位于域控制器的`%SystemRoot%\NTDS\NTDS.dit`中。
+    - 以下工具和技术可用于枚举NTDS文件和整个Active Directory散列的内容。
+    Volume Shadow Copy
+    secretsdump.py
+    Using the in-built Windows tool, ntdsutil.exe
+    Invoke-NinjaCopy 
+  - **GPP组策略首选项文件** (NTDS from Domain Controller)
+    - 组策略首选项（GPP）是允许管理员使用嵌入凭据创建域策略的工具。这些策略允许管理员设置本地帐户。
+    - 这些组策略存储在域控制器上的SYSVOL中，这意味着任何域用户都可以查看SYSVOL共享并解密密码（AES私钥在线泄漏）。
+    - 以下工具和脚本可用于从**组策略首选项XML文件**收集和解密密码文件：
+    Metasploit的后期开发模块：`post/windows/gather/credentials/gpp`
+    Get-GPPPassword [5]
+    gpprefdecrypt.py 
+    - 注：在SYSVOL共享上，以下内容可用于枚举潜在的XML文件。`dir /s * .xml`
+  - **服务主体名称SPNs** (Service Principal Names)
+    - 参考[Kerberoasting](https://attack.mitre.org/techniques/T1208/)
+  - **明文凭证** (Plaintext Credentials)
+    - 用户登录到系统后，会生成各种凭据，并将其存储在内存中的本地安全授权子系统服务（LSASS）进程中。管理用户或系统可以获取这些凭据。
+    - **SSPI**安全支持提供程序接口作为多个SSPs（安全支持提供程序）的公共接口，作为一个动态链接库DLL可以被一或多个SSPs使用。
+    - 以下**SSP**可用于访问凭据：
+    Msv：交互式登录、批量登录和服务登录通过Msv身份验证包完成。
+    Wdigest：摘要身份验证协议设计用于超文本传输协议HTTP，和简单身份验证安全层SASL交换。
+    Kerberos：在Windows 2000和更高版本中，首选用于相互客户端-服务器域身份验证。
+    CredSSP：为远程桌面服务提供SSO和网络级别的身份验证。
+    - 以下工具可用于枚举凭据：
+    Windows Credential Editor
+    Mimikatz
+    - 与内存技术一样，LSASS进程内存也可以从目标主机中转储并在本地系统上进行分析。
+    例如，在目标主机上使用procdump：`procdump -ma lsass.exe lsass_dump`
+    在本地，可以运行mimikatz：
+    `sekurlsa::Minidump lsassdump.dmp`
+    `sekurlsa::logonPasswords`
+  - **DCSync**
+    - DCSync是凭证转储的**变体**，可用于从域控制器获取敏感信息。
+    - 该操作不执行可识别的恶意代码，而是通过滥用域控制器的**API**来模拟来自远程域控制器的复制过程。
+    - 域控制器上的管理员、域管理员、企业管理组或计算机帐户的任何成员都可以运行DCSync从Active Directory中提取密码数据，其中可能包括KRBTGT和Administrators等潜在有用帐户的当前和历史哈希值
+    - 这些散列可以用于创建一个Golden Ticket，用于传递凭据或更改帐户的密码。
+    - DCSync功能已包含在Mimikatz的`lsadump`模块中。
+    - Lsadump还包括NetSync，通过传统复制协议执行DCSync。
+- **Linux**
+  - **Proc filesystem**
+    - Linux上的`/proc`**文件系统**包含大量有关正在运行的操作系统状态的信息。
+    - 以root用户权限运行的进程可以使用此功能镜像其他正在运行的程序的实时内存。
+    - 如果这些程序中的任何一个将密码存储在明文或内存中的密码散列中，则可以分别为使用或暴力攻击获取这些值。
+    - 使用MimiPenguin（受Mimikatz启发的开源工具）工具转储进程内存，然后通过查找文本字符串和regex模式来获取密码和散列，以了解给定的应用程序（如Gnome Keyring、sshd、Apache）身份验证工件如何使用内存来存储。
+
+## 防御方式
+缓解|描述
+:--:|:--
+Active Directory配置|恰当配置`Replicating Directory Changes`（复制目录更改）的访问控制列表以及与域控制器复制相关的其他权限。
+凭证访问保护|在Windows 10中，Microsoft实现了`Credential Guard`以保护LSA secrets。默认情况下为未配置状态，且具有硬件和固件系统要求。但不能防止所有形式的凭证转储。
+操作系统配置|考虑禁用或限制NTLM。
+密码策略|确保本地管理员帐户在网络所有系统上都具有复杂的唯一密码。
+特权账户管理(Windows)|除非用户或管理域帐户已进行严格控制，不要将它们放在整个系统的本地管理员组中，（通常等效于在所有系统上使用具有相同密码的本地管理员帐户）。遵循最佳实践来设计和管理企业网络，限制特权帐户在各个管理层之间的使用。
+特权账户管理(Linux)|从内存中镜像密码需要root特权。遵循最佳实践，限制对特权帐户的访问。
+特权流程完整性|在Windows 8.1和Windows Server 2012 R2上，启用LSA的`Protected Process Light`。
+用户培训|培训用户和管理员不要对多个帐户使用相同的密码，限制帐户和系统之间的凭证重叠。
+
+## 检测
+- **Windows**
+  - 监视**与lsass.exe交互的意外进程**。
+    - 常见凭据转储程序（如Mimikatz）通过打开该进程、查找LSA机密密钥和解密存储凭据详细信息的内存部分来访问LSA子系统服务（lsass）进程。
+    - 凭证转储程序还可以使用反射进程注入的方法来减少恶意活动的潜在特征。
+  - 监视**散列行为**。
+    - 散列转储程序打开本地文件系统（`SystemRoot%/system32/config/SAM`）上的安全帐户管理器（SAM），或创建注册表SAM项的转储以访问存储的帐户密码散列。
+    - 一些散列转储程序将本地文件系统作为设备打开，并解析到SAM表，以避免文件访问防御。其他人会在读取散列之前制作一个SAM表的内存副本。
+  - 监视可能已被控制账户的使用。
+  - 在Windows 8.1和Windows Server 2012 R2上，监视创建`LSASS.exe`的**Windows日志**，确认LSASS是作为受保护进程启动的。
+  - 监视程序执行的**进程和命令行参数**。
+    - 包含内置特性，或合并现有的工具，如Mimikatz。
+    - 包含证书销毁功能的POWER Script脚本，如PosisPrimIT的调用MIMIKATZ模块。
+    - 可能需要在操作系统中配置附加的日志记录特征来收集必要的分析信息。
+  - 监视**域控制器日志**，查看复制请求和其他可能与DCSync关联的未计划活动。
+    - 注意：域控制器不能记录来自默认域控制器帐户的复制请求。
+  - 监视来自**与已知域控制器无关**的IP的网络协议和其他复制请求。
+- **Linux**
+  - **行为**。要获取存储在内存中的密码和散列，进程必须在`/proc`文件系统中为要分析的进程打开一个映射文件。此文件存储在`/proc//maps`路径下，其中的目录是要查询此类身份验证数据的程序的唯一pid。
+  - **AuditD监视工具**。可以用来监视在proc文件系统中打开此文件的恶意进程，告警此类程序pid、进程名和参数。
+
+***
+
+### Credentials from Web Browsers(Web浏览器凭证)(All)
+>[原文链接](https://attack.mitre.org/techniques/T1503/)
+## 背景
+- 攻击者可以通过读取特定于目标浏览器的文件,来从Web浏览器获取凭据。
+- Web浏览器通常会保存凭据如网站用户名和密码，以便无需手动输入。
+- Web浏览器通常将凭据以加密格式存储在**凭据存储区**中，存在从Web浏览器中提取纯文本凭据的方法。
+
+## 利用场景
+- Windows系统上，通过**读取数据库文件**`AppData\Local\Google\Chrome\User Data\Default\Login Data`并执行SQL查询`SELECT action_url, username_value, password_value FROM logins;`从`Google Chrome`获得加密的凭据。然后，通过将加密的凭据传递给Windows API函数`CryptUnprotectData`获取纯文本密码，
+- 攻击者还可以通过在Web浏览器进程内存中**搜索**与凭据匹配的模式来获取凭据。
+- 从网络浏览器获取凭据后，可以尝试在不同系统和/或帐户之间**回收凭据**，以扩大访问范围。如果凭据是特权帐户，可以大大提高对手的目标。
+
+## 防御方式
+缓解|描述
+:--:|:--
+密码策略|权衡将凭据存储在Web浏览器中的风险。如果Web浏览器凭据公开非常重要，则可以使用技术控制/策略/用户培训来防止凭据存储在Web浏览器中。
+
+## 检测
+- **确定**包含凭据的网络浏览器**文件**，例如Google Chrome的Login Data数据库文件：`AppData\Local\Google\Chrome\User Data\Default\Login Data`。
+- 监视包含凭据的Web浏览器文件的文件**读取事件**，尤其是在读取过程与主题Web浏览器无关时。
+- 监视进程执行日志，`PowerShell Transcription`，重点关注那些执行多种行为，如读取Web浏览器进程内存，利用正则表达式，并包含许多常见Web应用程序（Gmail，Twitter，Office365等）关键字的行为。
+
+***
+
+### Credentials in Files (文件中的凭证) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1081/)
+## 背景
+- 用户创建的用于存储自己凭据的文件
+- 用于组的共享凭据存储
+- 包含系统或服务密码的配置文件
+- 包含嵌入式密码的源代码/二进制文件。
+
+## 利用场景
+- 攻击者可能会在本地文件系统和远程文件共享中搜索**包含密码的文件**。
+- 可以通过凭据转储从备份或保存的**虚拟机**中提取密码。
+- 也可以从Windows**域控制器**上存储的组策略首选项中获取密码。
+- 经过身份验证的用户凭据通常存储在**本地配置和凭据文件**中（多见于云环境）。在某些情况下，可以将这些文件复制并在另一台机器上重复使用，或者可以读取内容，无需复制文件将其用于身份验证。
+
+## 防御方式
+缓解|描述
+:--:|:--
+Active Directory配置|删除易受攻击的组策略首选项。
+审计|搜索包含密码的文件，并采取措施降低发现风险。
+密码策略|建立禁止在文件中存储密码的组织策略。
+文件和目录权限配置|将文件共享限制为特定目录，仅必要的用户具有访问权限。
+用户培训|确保开发人员和系统管理员了解在在终端系统或服务器上使用明文密码的相关风险。
+
+## 检测
+- 监视执行进程的**命令行参数**，查找可能指示搜索密码的可疑单词或正则表达式（如：password、pwd、login、secure、credentials）。
+
+***
+
+### Credentials in Registry (注册表中的凭证) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1214/)
+## 背景
+- Windows**注册表**存储系统或其他程序可以使用的配置信息。攻击者可以查询注册表，以查找已存储供其他程序或服务使用的凭据和密码。
+
+## 利用场景
+- 查找与密码信息相关的注册表项的示例命令：
+  本地机器配置单元：`reg query HKLM /f password /t REG_SZ /s`
+  当前用户配置单元：`reg query HKCU /f password /t REG_SZ /s`
+
+## 防御方式
+缓解|描述
+:--:|:--
+审计|在注册表中搜索凭据，并进行相应管理。
+密码策略|不将凭据存储在注册表中。
+特权账户管理|如果有软件必须将凭据存储在注册表中，则确保关联账户遵循最小权限原则。
+
+## 检测
+- 监视可用于**查询注册表**（如Reg）的应用程序的进程，并收集可能指示正在搜索凭据的命令参数。
+- 将活动与相关的可疑行为**关联**分析。这些行为可能表明存在活动入侵，以减少误报。
+
+***
+
+### Exploitation for Credential Access (凭证访问利用) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1212/)
+## 背景
+- 当攻击者利用程序，服务或操作系统软件或内核本身内的**不安全编程**来执行攻击者控制的代码时，就会利用软件漏洞。
+
+
+## 利用场景
+- 认证和身份验证机制可能会被对手利用，作为**获取可用证书**或**绕过**进程获取系统访问权限的手段。
+- 对凭证访问的利用还可能导致**特权升级**，取决于漏洞利用过程或获取的凭据。
+- 示例：[MS14-068](https://www.freebuf.com/vuls/56081.html)。针对Kerberos，可用于使用域用户权限伪造Kerberos凭据。
+
+## 防御方式
+缓解|描述
+:--:|:--
+应用程序隔离和沙箱|通过使用沙箱利用未发现或未修补的漏洞。其他类型的虚拟化和应用程序微分段也可以减轻某些类型的利用的影响。
+漏洞利用防护|使用安全应用程序来缓解某些攻击行为，如Windows Defender Exploit Guard（WDEG）和增强的缓解体验工具包（EMET）。也可以尝试控制流完整性检查。
+威胁情报|强大的网络威胁情报能力可以确定哪些类型和级别的威胁可能使用软件攻击和特定组织的0day攻击。
+软件更新|企业内部终端和服务器定期更新软件。
+
+## 检测
+- **行为**。
+  - 程序**运行**异常、不稳定或崩溃；
+  - **进程**的异常行为；
+  - **账户**的不正常使用或未知账户的使用。
+
+***
+
+### Forced Authentication (强制认证) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1187/)
+## 背景
+- 服务器消息块**SMB协议**通常在Windows网络中用于身份验证和系统之间的通信，以访问资源和文件共享。
+- Windows系统尝试连接到SMB资源时，将**自动尝试身份验证**并将当前用户的**凭据信息发送到远程系统**。此行为在企业环境中很常见，让用户不需要输入凭据即可访问网络资源。
+- 当SMB被阻止或失败时，Windows系统通常将Web分布式创作和版本控制**WebDAV**用作备份协议。WebDAV是HTTP的扩展，通常在TCP端口**80和443**上运行。
+
+## 利用场景
+- 利用此行为通过强制SMB身份验证来访问用户**帐户哈希**。
+- 通过网络钓鱼，向用户发送包含指向外部服务器的资源链接（即模板注入）的附件，或将文件放在特权帐户的导航路径（如桌面上的SCF文件）上，或放在受害者要访问的可公开访问的共享上。当用户的系统访问不受信任的资源时，它将尝试进行身份验证，并通过SMB将包括用户哈希凭据在内的信息**发送到对手控制的服务器**。
+- 通过访问凭证散列，可以通过离线暴力破解以获得明文凭证。
+- 常见恶意附件形式
+  - 一个speraphishing附件，其中包含一个具有在打开时自动加载的资源（即模板注入）的文档。如包含类似于`file[：]//[远程地址]/Normal.dotm`的请求来触发SMB请求。
+  - 一个经过修改的.LNK或.SCF文件，其图标文件名指向外部引用，如`\[remote address]\pic.png`，当图标文件重复收集凭据时，该文件将强制系统加载资源。
+
+## 防御方式
+缓解|描述
+:--:|:--
+过滤网络流量|通过出口过滤或阻止TCP端口139、445和UDP端口137，以阻止SMB流量从企业网络发往外部；筛选或阻止WebDAV协议流量发送出网络；如果需要通过SMB和WebDAV访问外部资源，则使用白名单严格限制。
+密码策略|通过使用强密码，增加破解密码哈希的难度。
+
+## 检测
+- 监视TCP**端口**139、445和UDP端口137上的SMB**通信**，以及试图与外部未知系统建立连接的WebDAV通信。
+- 对于内部流量，监控工作站到工作站的**异常SMB流量**（与基线相比）。对于许多网络来说不应有该类通信。
+- 监视系统和虚拟环境中的**指向外部网络资源的**资源的.LNK，.SCF或任何其他文件的创建和修改。
+
+***
+
+### Hooking (钩子进程) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1179/)
+
+同第三部分“Persistence”，第四部分“Privilege Escalation”
+
+***
+
+### Input Capture (输入捕获) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1056/)
+## 背景
+- 攻击者可以使用**捕获用户输入**的方法来获取有效帐户和信息收集的凭据，包括键盘记录和输入字段拦截。
+
+## 利用场景
+- **键盘记录**是最流行的输入捕获类型，具有多种截取键盘的方法，但也存在其他方法将信息用于特定目的，如执行UAC提示或包装Windows默认凭据提供程序。
+- 当凭证转储Credential Dumping无效时，按键记录可用于获取新访问机会的凭据，并且可能在机会出现之前在系统上保持**被动静默记录**一段时间。
+- 对手还可以在**外部门户**界面上安装代码（如VPN登录页面），以捕获和传输试图登录到该服务的用户的凭据。
+- 输入捕获可以在**攻陷后进行**，并使用合法的管理访问作为备份措施，通过外部远程服务External Remote Services和有效帐户Valid Accounts保持网络访问，或作为利用外部web服务进行初始利用的一部分。
+
+## 防御方式
+缓解|描述
+:--:|:--
+软件|使用各类安全工具检测软件类键盘记录器。
+硬件|检查设备接口，并使用安全工具检测硬件类键盘记录器。
+web门户|检查源码是否存在可被利用的漏洞。
+
+## 检测
+- 键盘记录程序可以采用多种形式，可能涉及**修改注册表**和**安装驱动程序**，**设置挂钩**或**轮询**以拦截键盘输入。常用的API调用包括`SetWindowsHook`，`GetKeyState`和`GetAsyncKeyState`。
+- 监视注册表和文件系统中的此类**更改**并检测**驱动程序安装**，以及查找常见的键盘记录**API调用**。单独的API调用并不表示按键记录，但可以提供行为数据与其他信息（例如，写入磁盘的新文件和异常进程）**关联**。
+- 监视**注册表**添加自定义凭据提供程序的活动。
+- 检测**正在使用的受害有效帐户**。
+
+***
+
+### Input Prompt (输入提示) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1141/)
+## 背景
+- 当执行的程序需要比当前用户上下文中的权限更多的权限时，操作系统通常会**提示**用户提供适当的凭据，以授权为该任务提升的权限
+
+## 利用场景
+- 对手可能会**模仿**此功能，以一个看似合法的提示提示用户凭据，如需要额外访问的假安装程序或假恶意软件删除套件，诱导用户进行下一步认证。
+- 此类型的提示可用于通过**各种语言**（如AppleScript）收集凭据和PowerShell
+
+## 防御方式
+缓解|描述
+:--:|:--
+用户培训|提高安全意识并提高对潜在恶意事件的怀疑（如提示凭据的Office文档）。
+
+## 检测
+- 监视进程执行过程中是否存在异常程序以及可用于提示用户输入凭据的**恶意脚本**。
+- 检查并仔细检查输入提示中是否存在**非法指标**，例如非传统标语，文本，时间和来源。
+
+***
+
+### Kerberoasting (kerberoasting攻击 (Windows))
+>[原文链接](https://attack.mitre.org/techniques/T1208/)
+## 背景
+- 服务主体名称**SPN**用于唯一标识Windows服务的每个实例。
+- 要启用身份验证，**Kerberos**要求spn至少与一个服务登录帐户（专门负责运行服务的帐户）关联。
+
+## 利用场景
+- 拥有有效Kerberos票证授予票证TGT的对手，可以从域控制器DC为任何SPN**请求**一个或多个Kerberos票证授予服务(TGS)票证。
+- 这些票证的一部分可能用**RC4**算法（或其他不安全的加密算法）加密，则说明与SPN关联的服务帐户的`Kerberos 5 TGS-REP etype 23`哈希被用作私钥，容易被脱机暴力破解。
+- 可以利用从网络流量**捕获**的服务票证执行相同的攻击。
+- 被破解的散列可以通过访问**有效帐户**来实现**持久性**、**权限提升**和**横向移动**。
+
+## 防御方式
+缓解|描述
+:--:|:--
+加密敏感信息|启用AES Kerberos加密或其他更强的加密算法，不使用RC4。
+密码策略|确保服务帐户的密码长度和复杂性，密码定时过期。考虑使用如密码库的，组托管服务帐户或其他第三方产品。
+特权账户管理|服务账户权限最小化，包括特权组（例如域管理员）的成员资格。
+
+## 检测
+- 启用**审核Kerberos服务**票证操作，记录Kerberos TGS服务票证请求。
+- 监视**异常活动**，如在短时间内提出大量请求的帐户。
+- **系统日志**。Event ID 4769，尤其是还请求了RC4加密`Type 0x17`。
+
+***
+
+### Keychain (Apple 钥匙串) (macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1081/)
+## 背景
+- Keychain是macOS的**密码管理系统**。跟踪用户密码和凭据的内置方式，用于许多服务和功能，如WiFi密码、网站、安全注释、证书和Kerberos。
+- Keychain文件位于`~/Library/Keychains/`,`/Library/Keychains/`和`/Network/Library/Keychains/`。
+- 默认情况下，macOS中内置的`security`命令行程序提供了管理这些凭据的有用方法。
+- 要管理其凭据，用户必须使用**其他凭据**来访问Keychain。
+
+## 利用场景
+- 如果获取登录Keychain的凭据，则他们可以**访问**存储在此Vault中的所有其他凭据。
+- 默认情况下，Keychain的密码短语是用户的登录凭据。
+
+## 防御方式
+缓解|描述
+:--:|:--
+密码策略|更改用户的登录Keychain的密码为强密码。
+
+## 检测
+- 监视**对Keychain的系统调用**以确定是否存在可疑访问活动。
+- 解锁Keychain并从中使用密码是一个非常常见的过程，任何检测技术都可能会产生很多误报。
+
+***
+
+### LLMNR/NBT-NS Poisoning and Relay (LLMNR/NBT-NS中毒和中继) (Windows)
+## 背景
+- 链路本地多播名称解析LLMNR，NetBIOS名称服务NBT-NS，是作为主机标识的替代方法的Microsoft Windows组件。
+- **LLMNR**基于DNS格式，允许同一本地链接上的主机为其他主机执行名称解析。
+- **NBT-NS**通过NetBIOS名称标识本地网络上的系统。
+
+## 利用场景
+- 通过响应LLMNR（UDP 5355）/NBT-NS（UDP 137）通信，来**欺骗**受害者网络上的权威源DNS，从而进行**DNS毒化**，使受害者与攻击者控制的系统通信。
+- 如果请求的主机属于需要标识身份或身份验证的资源，则发送用户名和NTLMv2哈希。然后，攻击者可以通过监视端口流量或网络嗅探，收集通发送的散列信息，并通过蛮力离线破解散列以**获取明文密码**。
+- 如果攻击者可以访问系统之间的身份验证路径中的系统，或当使用凭据的自动扫描向攻击者控制的系统进行身份验证时，可以**截获并中继**NTLMv2散列，以访问和执行针对目标系统的代码。
+- 中继步骤可能与中毒同时发生，但也可能与中毒无关。
+
+## 防御方式
+缓解|描述
+:--:|:--
+禁用或删除功能或程序|如果环境中不需要LLMNR和NetBIOS，则在本地计算机安全设置中或通过组策略禁用它们。
+过滤网络流量|使用基于主机的安全软件阻止LLMNR/NetBIOS通信。启用S​​MB签名以阻止NTLMv2中继攻击。
+
+## 检测
+- 监视`HKLM\Software\Policies\Microsoft\Windows NT\DNSClient`中`EnableMulticast`DWORD值的**更改**。0表示LLMNR被禁用。
+- 如果安全策略禁用了LLMNR / NetBIOS，监视UDP 5355和UDP 137**端口通信**。
+- 部署LLMNR/NBT-NS**欺骗检测工具**。监
+- 监视Windows事件**日志**中Event ID 4697和7045检测成功的中继活动。
+
+***
+
+### Network Sniffing (网络嗅探) (All)
+## 背景
+- 网络嗅探是指使用系统上的网络接口**监视或捕获**通过有线或无线连接发送的信息。
+
+## 利用场景
+- 攻击者可以将网络接口设置为混杂模式，以**被动**地嗅探通过网络传输的数据，也可以使用跨接端口来**捕获**大量数据。
+- 通过此技术捕获的数据可能包括**用户凭据**，特别是通过不安全、未加密协议发送的凭据。
+- 通过DNS中毒的技术，可以通过**重定向**来捕获网站、代理和内部系统的凭证。
+- 网络嗅探还可以侦查**配置细节**，如运行的服务、版本号和其他网络特征（P地址、主机名、VLAN ID），这些都是后续横向移动和/或防御规避活动所必需的。
+
+## 防御方式
+缓解|描述
+:--:|:--
+加密敏感信息|确保所有有线和无线流量均已正确加密。对认证协议如Kerberos使用最佳实践，并确保可能包含凭据的Web流量受到SSL/ TLS的保护。
+多因素认证|尽可能使用多因素身份验证。
+
+## 检测
+- 检测导致嗅探网络流量的**事件**，如中间人攻击。
+- 监视**ARP**欺骗和可疑ARP广播。
+- 检测网络中的**脆弱性**。
+- 检测恶意**配置更改和设备映像**。
+
+***
 
 ### Password Filter DLL
 
@@ -1447,19 +1900,34 @@
 
 ### System Time Discovery
 
-### Virtualization/Sandbox Evasion
+### Virtualization/Sandbox Evasion(虚拟机/沙盒规避)(All)
+>[原文链接](https://attack.mitre.org/techniques/T1497/)
+
+同第四部分“Privilege Escalation”
+
+***
 
 ***
 
 ## Lateral Movement(横向移动）
 
-### AppleScript
+### AppleScript(Apple脚本)(macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1155/)
+
+同第二部分“Execution”
+
+***
 
 ### Application Access Token
 
 ### Application Deployment Software
 
-### Component Object Model and Distributed COM
+### Component Object Model and Distributed COM(组件对象模型和分布式COM)(Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1175/)
+
+同第二部分“Execution”
+
+***
 
 ### Exploitation of Remote Services
 
@@ -1477,7 +1945,12 @@
 
 ### Remote Services
 
-### Replication Through Removable Media
+### Replication Through Removable Media(通过可移动介质复制)(All)
+>[原文链接](https://attack.mitre.org/techniques/T1091/)
+
+同第一部分“Initial Access”
+
+***
 
 ### Shared Webroot
 
@@ -1485,12 +1958,21 @@
 
 ### Taint Shared Content
 
-### Third-party Software
+### Third-party Software(第三方软件)(All)
+>[原文链接](https://attack.mitre.org/techniques/T1072/)
+
+同第二部分“Execution”
+
+***
 
 ### Web Session Cookie
 
 ### Windows Admin Shares
 
-### Windows Remote Management
+### Windows Remote Management(Windows远程控制)(Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1028/)
 
+同第二部分“Execution”
+
+***
 
