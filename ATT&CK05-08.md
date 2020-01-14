@@ -1770,7 +1770,7 @@ web门户|检查源码是否存在可被利用的漏洞。
 ***
 
 ### Keychain (Apple 钥匙串) (macOS)
->[原文链接](https://attack.mitre.org/techniques/T1081/)
+>[原文链接](https://attack.mitre.org/techniques/T1142/)
 ## 背景
 - Keychain是macOS的**密码管理系统**。跟踪用户密码和凭据的内置方式，用于许多服务和功能，如WiFi密码、网站、安全注释、证书和Kerberos。
 - Keychain文件位于`~/Library/Keychains/`,`/Library/Keychains/`和`/Network/Library/Keychains/`。
@@ -1793,6 +1793,7 @@ web门户|检查源码是否存在可被利用的漏洞。
 ***
 
 ### LLMNR/NBT-NS Poisoning and Relay (LLMNR/NBT-NS中毒和中继) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1171/)
 ## 背景
 - 链路本地多播名称解析LLMNR，NetBIOS名称服务NBT-NS，是作为主机标识的替代方法的Microsoft Windows组件。
 - **LLMNR**基于DNS格式，允许同一本地链接上的主机为其他主机执行名称解析。
@@ -1819,6 +1820,7 @@ web门户|检查源码是否存在可被利用的漏洞。
 ***
 
 ### Network Sniffing (网络嗅探) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1040/)
 ## 背景
 - 网络嗅探是指使用系统上的网络接口**监视或捕获**通过有线或无线连接发送的信息。
 
@@ -1842,15 +1844,125 @@ web门户|检查源码是否存在可被利用的漏洞。
 
 ***
 
-### Password Filter DLL
+### Password Filter DLL (密码筛选DLL) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1174/)
+## 背景
+- **password filters** 是Windows密码政策执行机制，适用于域和本地帐户。
+- Filters作为动态链接库**DLL**实现，其中包括对密码策略有效的潜在验证密码。D​​LL可以位于本地计算机上的本地帐户或域控制器的域帐户中。
+- 将新密码注册到**SAM**(Security Accounts Manager)之前，**LSA**(Local Security Authority)对每一个注册的Filter进行认证，都确认有效之前任何潜在的更改都不会生效。。
 
-### Private Keys
+## 利用场景
+- 攻击者可以注册**恶意Password Filter**，以从本地计算机和/或整个域中获取凭据。
+- 要执行正确的验证，Filter必须从LSA接收纯文本凭据。恶意Password Filter将在每次发出密码请求时接收这些纯文本凭据。
 
-### Securityd Memory
+## 防御方式
+缓解|描述
+:--:|:--
+操作系统配置|确保仅注册有效的Password Filter。D​​LL必须存在于域控制器或本地计算机的Windows安装目录，默认`C:\Windows\System32\`中，并在其中具有相应的条目`HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\Notification Packages`。
 
-### Steal Web Session Cookie
+## 检测
+- 监视与陌生Password Filter之间的**更改**。
+  - 新安装的Password Filter在系统重新启动后才会生效。
+  - 密码过滤器将显示为自动运行并在lsass.exe中加载DLL。
 
-### Two-Factor Authentication Interception
+***
+
+### Private Keys (私钥) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1145/)
+## 背景
+- 私钥和证书用于身份验证，加密/解密和数字签名。
+
+## 利用场景
+- 从已攻陷的系统中**收集私钥**，用于对SSH等远程服务进行身份验证，或用于解密其他收集的文件如电子邮件。
+- 通用密钥和证书文件扩展名包括：.key、.pgp、.gpg、.ppk、.p12、.pem、.pfx、.cer、.p7b、.asc。
+- 还可以在**公共密钥目录**中查找，如使用`~/.ssh`在基于*nix的系统上查找ssh密钥，或在Windows上查找`C:\Users(username).ssh\`。
+- 私钥可能需要密码或口令（passphrases）才能进行操作，因此攻击者通常结合输入捕获进行密钥记录，或者尝试脱机爆破口令。
+
+## 防御方式
+缓解|描述
+:--:|:--
+审计|只允许授权密钥定期访问关键资源，并审核访问列表。
+加密敏感信息|将密钥存储在单独的加密硬件而非本地系统。
+网络细分|使用单独的基础架构管理关键系统，防止凭据和权限在可用作横向移动的系统上重叠。
+密码策略|对私钥使用强口令，使破解变得困难。
+文件和目录权限|在包含敏感私钥的文件夹上正确设置权限防止意外访问。
+
+## 检测
+- 监视对与加密密钥和证书有关文件和**目录的访问**，作为收集和渗透活动的访问模式指标。
+- 收集**身份验证日志**，查找表明不正确使用密钥或证书进行远程身份验证的异常活动。
+
+***
+
+### Securityd Memory (安全内存) (macOS)
+>[原文链接](https://attack.mitre.org/techniques/T1167/)
+## 背景
+- 在El Capitan之前的OS X中，具有root访问权限的用户可以读取**纯文本已登录用户的密钥链密码**，因为Apple的密钥链实现允许缓存这些凭据以避免反复提示用户输入密码。
+- Apple的安全实用程序获取用户的登录密码，并使用PBKDF2对其进行加密，然后将该主密钥**存储在内存中**。
+- Apple还使用一组密钥和算法来加密用户密码，但是一旦找到主密钥，攻击者只需遍历其他值即可解锁最终密码。
+
+## 利用场景
+- 如果攻击者获得root访问权限（允许他们读取securityd的内存），则可以通过**内存扫描**，以相对**较少的尝试**找到正确的密钥序列，**解密**用户登录密钥链。
+- 如果成功，攻击者将获得用户、WiFi、邮件、浏览器、证书、安全说明secure notes等**所有的明文密码**。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 监测疑似攻陷或新加入的设备中，对**内存读取和镜像**的异常尝试。
+
+***
+
+### Steal Web Session Cookie (Web会话Cookie窃取)
+>[原文链接](https://attack.mitre.org/techniques/T1539/)
+## 背景
+- 用户对网站进行身份验证后，Web应用程序和服务通常将会话**cookie**用作身份验证令牌，来获取访问Web应用程序或Internet服务的权限，而无需凭据。
+- Cookies通常在很长一段时间内有效。
+- Cookies可以在磁盘、浏览器的进程内存和远程系统的网络通信中找到。
+- 目标计算机上的其他应用程序可能会在内存中存储敏感的身份验证cookie，如向云服务进行身份验证的应用程序。
+
+
+## 利用场景
+- 从本地系统的web浏览器**盗取**cookie；
+- 使用一些开源框架，如Evilginx 2和Mauraena，通过钓鱼进行**中间人攻击**收集会话cookie。
+- 获取有效的Cookie后，可以使用Cookie盗用账号登录到相应的Web应用程序。
+- 会话cookies可用于**绕过**某些**多因素身份验证**协议。
+
+
+## 防御方式
+缓解|描述
+:--:|:--
+多因素认证|通过多因素认证，如登录地点与秘钥结合进行认证
+软件配置|配置浏览器或软件定时删除永久性cookie。
+用户培训|培训用户以识别网络钓鱼。
+
+## 检测
+- 监视**访问**存储浏览器会话cookie的**本地文件**的尝试。
+- 监视程序尝试**注入或镜像**浏览器进程内存的情况。
+
+***
+
+### Two-Factor Authentication Interception (双因素身份验证拦截) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1111/)
+## 背景
+- 使用**多因素身份验证**，和单独使用用户名和密码相比提供更高级别的安全性，但应意识到可用于拦截和绕过这些安全性机制的技术。
+- 攻击者可以将身份验证机制（例如智能卡）作为目标，以获得对系统，服务和网络资源的访问权限。
+
+## 利用场景
+- 如果智能卡用于双因素身份验证（2FA），攻击者可以使用**键盘记录器**获取与智能卡关联的密码。
+- 还可以使用密钥记录器以类似的方式瞄准其他**硬件令牌**，如RSA SecurID。捕获令牌输入，包括用户的个人识别码，可以提供**临时访问**（即在下一个值滚动之前重放一次性密码）以及可能使对手能够**预测**未来的身份验证码（给定对算法和用于生成附加的临时值的任何种子值的访问代码）。
+- 2FA的其他方法可以被**截获**并被攻击者用于认证，如通过带外通信（电子邮件、短信）发送一次性代码。
+- **复刻**硬件设备等方式。
+
+## 防御方式
+缓解|描述
+:--:|:--
+用户培训|安全意识培训。
+
+## 检测
+- 对键盘记录器等硬件、拦截等软件方式进行监测。
+
+***
+
 
 ***
 
