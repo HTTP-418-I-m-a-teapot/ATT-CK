@@ -1966,25 +1966,223 @@ web门户|检查源码是否存在可被利用的漏洞。
 
 ***
 
-## Discovery (嗅探扫描)
+## Discovery (发现)
+>攻击者试图更多的了解目标环境。
 
-### Account Discovery
+**发现**包括攻击者用来获取有关系统和内部网络知识的技术。这些技术可帮助对手在采取行动之前**观察环境**并**确定方向**。攻击者还可以**探索**他们可以控制的内容及切入点附近的内容，以发现如何**进一步利用**以达成目标。本机操作系统工具通常用于实现**信息收集**。
 
-### Application Window Discovery
+***
 
-### Browser Bookmark Discovery
 
-### Domain Trust Discovery
+### Account Discovery (账户发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1087/)
+## 背景
+- 对手可能会尝试获取本地系统或域**帐户列表**。
 
-### File and Directory Discovery
+## 利用场景
+- **Windows**
+  - 使用Net程序或dsquery命令`net user`、`net group`、`net localgroup`获取本地系统或域**帐户列表**。
+  - 识别主要**用户**，当前登录的用户或通常使用系统的一组用户。
+- **mac**
+  - 使用`groups`和`id`命令枚举**组**。
+  - 使用`dscl . list /Groups`和`dscacheutil -q group`命令枚举**组和用户**
+  - 通过`/etc/master.passwd`文件枚举**本地账户**。
+  - 通过`/etc/passwd`文件枚举**单用户**
+- **Linux**
+  - 使用`groups`和`id`命令枚举**组**。
+  - 通过`/etc/passwd`文件枚举**本地账户**。
+- **Office 365与Azure AD**
+  - 通过身份验证的访问，可以使用多种工具来**查找帐户**。
+  - 在`Get-MsolRoleMember`指定角色或权限组的情况下，可以使用PowerShell命令**获取帐户名**。
+  - Azure CLI（AZ CLI）提供了一个界面，以获取对域进行身份验证访问的用户帐户。`az ad user list`将列出**域**中的所有**用户**。
+  - `Get-GlobalAddressList`PowerShell命令可用于使用经过身份验证的会话，从域中获取**电子邮件地址和帐户**
 
-### Network Service Scanning
+## 防御方式
+缓解|描述
+:--:|:--
+操作系统配置|防止在应用程序通过UAC提升时枚举管理员帐户。注册表项位于`HKLM\ SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\CredUI\EnumerateAdministrators`。可以通过GPO将其禁用：`Computer Configuration > [Policies] > Administrative Templates > Windows Components > Credential User Interface: E numerate administrator accounts on elevation`。
 
-### Network Share Discovery
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他活动（如横向运动）的行为**关联分析**。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 还可以通过Windows**系统管理工具**（如Windows management Instrumentation和PowerShell）获取信息。
 
-### Network Sniffing
+***
 
-### Password Policy Discovery
+### Application Window Discovery (应用程序窗口发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1010/)
+## 背景
+- 对手可能会尝试获取打开的应用**程序窗口列表**。。
+
+## 利用场景
+- 窗口列表可以表现出有关**系统使用的信息**，也可以为键盘记录程序收集的信息**提供上下文**。
+- 在Mac中，也可以使用小的AppleScript脚本完成。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他活动行为**关联分析**。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 还可以通过Windows**系统管理工具**（如Windows management Instrumentation和PowerShell）获取信息。
+
+***
+
+### Browser Bookmark Discovery (浏览器书签发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1087/)
+## 背景
+- 攻击者可能会枚举**浏览器书签**，以了解有关受感染主机的更多信息。
+- 存储位置因平台和应用程序而异，通常存储在本地文件/数据库中。
+
+## 利用场景
+- 浏览器书签可能会显示有关用户的**个人信息**（如银行网站，兴趣，社交媒体等），以及有关**内部网络资源信息**（如服务器，工具/仪表盘或其他相关基础架构）。
+- 攻击者访问有效凭据后，浏览器书签可以用来**提供其他目标**，尤其是凭据与浏览器缓存登录名关联的情况。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如收集和渗透。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+- 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+- 还可以通过Windows**系统管理工具**（如Windows management Instrumentation和PowerShell）获取信息。
+
+***
+
+### Domain Trust Discovery (域信任发现) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1087/)
+## 背景
+- 攻击者可能会尝试收集有关**域信任关系**的信息，这些信息可用于发现在复杂Windows域/森林环境中的横向移动机会。
+- 域信任为域提供了一种机制，允许基于另一个域的身份验证过程访问资源。即允许**受信域**的用户访问受信任域中的**资源**。
+
+## 利用场景
+- 用于发现在复杂Windows域/森林环境中的横向移动机会。
+- 现的信息可能有助于攻击者进行SID历史注入、传递票证和Kerberoasting。
+- 可以使用`DSEnumerateDomainTrusts ()`Win32 API调用、.NET方法和LDAP枚举域信任。
+- 已知Windows工具Nltest可以被武器化用于枚举域信任。
+
+## 防御方式
+缓解|描述
+:--:|:--
+审计|在现有域/森林中映射信任关系，并将信任关系保持在最低限度。
+网络细分|对敏感域采用网络分段技术。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**。
+
+***
+
+### File and Directory Discovery (文件和目录发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1083/)
+## 背景
+- 攻击者可能会枚举**文件和目录**，或在主机或网络共享的特定位置搜索文件系统内的某些信息。
+- 攻击者可以在自动发现过程中使用该技术**确定后续行为**，如确认是否完全攻陷目标或成功进行特定操作。
+
+## 利用场景
+- **Windows**
+  - 使用如`dir`和`tree`**程序**获取信息。
+  - 使用**自定义工具**收集文件和目录信息并与Windows API进行交互。
+- **Mac&Linux**
+  - 使用`ls`，`find`，和`locate`命令。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如收集和渗透。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+
+### Network Service Scanning (网络服务扫描) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1046/)
+## 背景
+- 攻击者可能会尝试获取在远程主机上运行的**服务**列表，包括可能容易受到远程软件利用的服务。
+
+## 利用场景
+- 获取此信息的方法包括使用系统附带的工具进行**端口扫描**和**漏洞扫描**。
+- 在云环境中，攻击者可能会尝试发现在**其他云主机**上运行的服务或环境中启用的**云服务**。如果云环境连接到本地环境，则攻击者可能能够识别在**非云系统**上运行的服务。
+
+## 防御方式
+缓解|描述
+:--:|:--
+禁用和删除|关闭不必要的端口和服务。
+网络入侵防护|使用IDS/IPS检测和阻止远程服务扫描。
+网络分段|确保遵循正确的网络分段以保护关键服务器和设备。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- **NIPS**可以用来识别扫描活动。
+- 监视**网络进程**使用并检查网络内部流量以检测端口扫描。
+
+
+***
+
+### Network Share Discovery (网络共享发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1135/)
+## 背景
+- 网络通常包含**共享**的网络驱动器和文件夹，使用户可以访问网络上各种系统的文件目录。
+
+## 利用场景
+- **Windows**
+  - Windows网络上的文件共享通过**SMB协议**进行。
+  - 可使用**Net命令**`net view \remotesystem`命令在远程系统中查询可用的共享驱动器。也可以使用`net share`来查询本地系统上的共享驱动器。
+  - 攻击者可能会寻找在远程系统上**共享**的文件夹和驱动器，作为识别信息源的手段，并确定横向移动的目标。
+- **Mac**
+  - 使用`df -aH`**命令**查看本地安装的共​​享。
+- **云**
+  - 云虚拟网络可能包含**远程网络共享或文件存储服务**，对手在获得对系统的访问权限后可以访问这些服务。
+  - 例如，AWS、GCP和Azure支持创建NFS（网络文件系统）**共享**和服务器消息块SMB（网络文件系统）共享，这些共享可以映射到终端或云系统上。。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- - 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+- 在基于云的系统中，**本机日志记录**可用于标识对某些可能包含系统信息的api和仪表盘的访问。
+
+***
+
+### Network Sniffing (网络嗅探) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1040/)
+
+同第五部分“Credential Access”
+
+### Password Policy Discovery (密码策略发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1087/)
+## 背景
+- 密码策略是一种强制执行复杂密码的方法。
+- 攻击者可能试图访问有关企业网络内使用的**密码策略**的详细信息。
+
+## 利用场景
+- 这将帮助攻击者创建一个常见密码列表，并发动遵守该策略的**字典攻击**或**蛮力攻击**。
+- 如，最小密码长度，密码强制包含元素数量，账户锁定策略等。
+- **Windows**
+  - `net accounts`
+  - `net accounts /domain`
+- **Linux**
+  - `chage -l`
+  - `cat /etc/pam.d/common-password`
+- **macOS**
+  - `pwpolicy getaccountpolicies`
+
+## 防御方式
+缓解|描述
+:--:|:--
+密码策略|确保仅注册有效的Password Filter。D​​LL必须存在于域控制器或本地计算机的Windows安装目录，默认`C:\Windows\System32\`中，并在其中具有相应的条目`HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\Notification Packages`。
+
+## 检测
+- 监视可能指示正用于密码策略发现的工具和命令行参数的**进程**。将该活动与系统中的其他可疑活动**关联**起来，以减少来自有效用户或管理员活动的潜在误报。
+- 攻击者可能会在操作的早期尝试查找密码策略，并且该活动可能与其他发现活动一起发生。
+
+***
 
 ### Peripheral Device Discovery
 
