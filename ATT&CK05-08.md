@@ -2184,31 +2184,325 @@ web门户|检查源码是否存在可被利用的漏洞。
 
 ***
 
-### Peripheral Device Discovery
+### Peripheral Device Discovery (外围设备发现)
+>[原文链接](https://attack.mitre.org/techniques/T1120/)
+## 背景
+- 攻击者可能会尝试收集有关连接到计算机系统的**外围设备和组件的信息**。
 
-### Permission Groups Discovery
+## 利用场景
+- 可以用于增强攻击者对**系统和网络环境**的了解，也可用于进一步的操作。
 
-### Process Discovery
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
 
-### Query Registry
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
 
-### Remote System Discovery
 
-### Security Software Discovery
+***
 
-### Software Discovery
+### Permission Groups Discovery (权限组发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1069/)
+## 背景
+- 攻击者可能会尝试查找本地系统或域级别的**组和权限**设置。
 
-### System Information Discovery
+## 利用场景
+- **Windows**
+  - 使用Net程序列出组，`net group /domain`和`net localgroup`。
+- **Mac**
+  - `dscacheutil -q group`列出域，`dscl . -list /Groups`列出本地组。
+- **Linux**
+  - `ldapsearch`列出域，`groups`列出本地组。
+- **Office 365&Azure AD**
+  - 通过身份验证后的访问，可以使用多种工具查找权限组。
+  - PowerShell命令Get-MsolRole可用于获取Exchange和Office 365帐户的角色和权限组。
+  - Azure CLI（AZ CLI）提供了一个界面以获取对域进行身份验证访问的权限组。
+  - 使用命令`az ad user get-member-groups`将列出与用户帐户关联的组。
 
-### System Network Configuration Discovery
+## 防御方式
 
-### System Network Connections Discovery
+- 属于系统功能滥用，无法简单缓解。
+  
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
 
-### System Owner/User Discovery
 
-### System Service Discovery
+***
 
-### System Time Discovery
+### Process Discovery (进程发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1057/)
+## 背景
+- 攻击者可能会尝试获取有关系统上正在运行的**进程信息**。
+
+## 利用场景
+- 获得的信息可用于了解网络内系统上运行的**软件**。
+- 攻击者可以在自动发现过程中使用该技术**确定后续行为**，如确认是否完全攻陷目标或成功进行特定操作。
+- **Windows**
+  - 使用Tasklist的`tasklist`命令或其他工具。
+- **Mac&Linux**
+  - 使用`ps`命令或其他工具。
+
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+
+### Query Registry (注册表查询) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1012/)
+## 背景
+- 攻击者可能会与Windows**注册表**进行交互，以收集有关系统，配置和已安装软件的信息。
+- 注册表包含有关操作系统，配置，软件和安全的大量信息。
+
+## 利用场景
+- 一些信息可能会帮助对手进一步**扩大攻击面**。
+- 攻击者可以在自动发现过程中使用该技术**确定后续行为**，如确认是否完全攻陷目标或成功进行特定操作。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 与Windows注册表的交互可能来自的**命令行**，也可能是通过通过API与注册表交互运行恶意软件。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+  
+***
+
+### Remote System Discovery (远程系统发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1018/)
+## 背景
+- 攻击者可能会尝试通过IP地址，主机名或网络上其他可用于从当前系统进行横向移动的逻辑标识符获取**其他系统**的列表。
+
+
+## 利用场景
+- **远程访问工具中**可以存在功能来实现此目的，也可以使用操作系统上的**系统程序**。
+- 攻击者还可以使用**本地主机文件**，以发现主机名到远程系统的IP地址的映射。
+- **Windows**
+  - 使用Net的`ping`或`net view`命令。
+  - 查看`C:\Windows\System32\Drivers\etc\hosts`文件内容。
+- **Mac**
+  - 通过**bonjour协议**在同一广播域内发现其他基于Mac的系统。
+  - `ping`等程序。
+  - `/etc/hosts`文件内容。
+- **Linux**
+  - `ping`等程序。
+  - `/etc/hosts`文件内容。
+- **云**
+  - 在云环境中，可以根据主机操作系统使用上述技术来发现远程系统。
+  - 另外，云环境通常向**API**提供有关远程系统和服务的信息。
+
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+
+### Security Software Discovery (安全软件发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1063/)
+## 背景
+- 攻击者可能会尝试获取系统上安装的**安全软件、配置、防御工具和传感器**的列表，包括**本地防火墙规则**和**防病毒策略**等内容。
+
+## 利用场景
+- 攻击者可以在自动发现过程中使用该技术**确定后续行为**，如确认是否完全攻陷目标或成功进行特定操作。
+- **Windows**
+  - Reg的netsh程序，`reg query`命令。
+  - cmd `dir`命令。
+  - Tasklist任务列表。
+  - 其他第三方工具。
+- **Mac**
+  - 对LittleSnitch和KnockKnock的检查
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+
+### Software Discovery (软件发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1518/)
+## 背景
+- 攻击者可能会尝试获取系统上安装的与安全无关的**软件列表**。
+
+## 利用场景
+- 攻击者可以在自动发现过程中使用该技术**确定后续行为**，如确认是否完全攻陷目标或成功进行特定操作。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+### System Information Discovery (系统信息发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1082/)
+## 背景
+- 攻击者可能试图获取有关操作系统和硬件的详细信息，包括**版本、补丁、更新程序，服务包和体系架构**。
+
+## 利用场景
+- 攻击者可以在自动发现过程中使用该技术**确定后续行为**，如确认是否完全攻陷目标或成功进行特定操作。
+- **Windows**
+  - cmd `ver`、`dir`、`Systeminfo`命令。
+- **Mac**
+  - `systemsetup`命令（需要管理员权限）。
+  - `system_profiler`命令，无需配置权限即可给出配置，防火墙规则，已安装的卷，硬件以及许多其他内容进行非常详细的分类信息。
+- **AWS**
+  - 在Amazon Web Services（AWS）中，使用Application Discovery Service来标识服务器，虚拟机，软件和运行中的软件依赖项。
+- **GCP**
+  - 在Google Cloud Platform（GCP）上，使用`GET /v1beta1/{{parent=organizations/}}/assets`或`POST /v1beta1/{{parent=organizations/}}/assets:runDiscovery`可用于列出组织的云资产，或在云环境上执行资产发现。
+- **Azure**
+  - 在Azure中，API请求`https://management.azure.com/subscriptions/{{subscriptionId}}/resourceGroups/{{resourceGroupName}}/providers/Microsoft.Compute/virtualMachines/{{vmName}}?api-version=2019-03-01`可用于检索有关虚拟机的模型或实例视图的信息。。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+  
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+- 在基于云的系统中，**本机日志记录**可用于标识对某些可能包含系统信息的api和仪表盘的访问。
+
+***
+
+### System Network Configuration Discovery (网络系统配置发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1016/)
+## 背景
+- 对手可能会寻找有关其访问的系统的**网络配置和设置的详细信息**，或通过远程系统的信息发现。
+
+## 利用场景
+- 使用Arp、ipconfig/ifconfig、nbtstat和route收集信息。
+- 攻击者可以在自动发现过程中使用该技术**确定后续行为**，如确认是否完全攻陷目标或成功进行特定操作。
+
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+
+### System Network Connections Discovery (网络系统连接发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1049/)
+## 背景
+- 攻击者可通过查询网络上的信息，尝试获取当前正在访问的受损系统或远程系统的**网络连接列表**。
+
+## 利用场景
+- 确定**横向移动**目标。
+- 获得对云环境一部分系统的访问权限，可以绘制虚拟私有云或虚拟网络，以确定连接了哪些系统和服务。
+- **Windows**
+  - netstat程序。
+  - Net的`net use`、`net session`命令。
+- **Mac&Linux**
+  - `netstat`和`lsof`可用来列出当前连接。
+  - `who -a`和`w`可用来显示当前登录的用户，类似于`net session`。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+
+### System Owner/User Discovery (系统所有者/用户发现) (All)
+>[原文链接](https://attack.mitre.org/techniques/T1033/)
+## 背景
+- 对手可能试图识别主要**用户**、当前登录用户、通常使用系统的用户集，或者用户**是否积极使用**系统。
+
+## 利用场景
+- 获得对云环境一部分系统的访问权限，可以绘制虚拟私有云或虚拟网络，以确定连接了哪些系统和服务。
+- **Windows**
+  - 可以使用多种发现技术收集信息，因为用户和用户名详细信息在整个系统中极为常见，包括运行进程所有权、文件/目录所有权、会话信息和系统日志。
+- **Mac**
+  - 使用`users`、`w`和`who`.命令识别当前登录的用户。
+- **Linux**
+  - 使用`w`和`who`命令识别当前登录的用户。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+
+### System Service Discovery (系统服务发现) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1120/)
+## 背景
+- 攻击者可能会试图获取有关**注册服务的信息**。
+
+## 利用场景
+- 可以使用操作系统实用程序获取有关服务的信息的命令，如tasklist的`sc`、`tasklist/svc`和Net的`net start`，也可以使用其他工具。
+- 攻击者可以在自动发现过程中使用该技术**确定后续行为**，如确认是否完全攻陷目标或成功进行特定操作。
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- 系统和网络发现技术通常发生在敌方了解环境的整个行动中。与其他后续活动行为**关联分析**，攻击者可能会基于所获取的信息进行其他活动，如横向移动。
+- 监视**进程和命令行参数**，关注为收集系统和网络信息而可能采取的操作。
+  - 具有内置功能的**远程访问工具**可以直接与Windows API交互以收集信息。
+  - 通过Windows**系统管理工具**（如Windows Management Instrumentation和PowerShell）获取信息。
+
+***
+
+### System Time Discovery (系统时间发现) (Windows)
+>[原文链接](https://attack.mitre.org/techniques/T1124/)
+## 背景
+- Windows时间服务在域中设置和存储**系统时间**，以维护网络中系统和服务之间的时间同步。
+- 攻击者可以从本地或远程系统收集**系统时间和时区**。
+
+## 利用场景
+- 可以通过多种方式收集此信息，如在Windows上执行`net time\hostname`。
+- 受害者的时区也可以从当前系统时间推断，也可以使用`w32tm/tz`收集。
+
+
+## 防御方式
+- 属于系统功能滥用，无法简单缓解。
+
+## 检测
+- **命令行界面监视**检测用于收集系统时间或时区的net.exe或其他命令行程序。
+- 检测用于收集这些信息的**API**，但合法软件可能经常使用它们。
+
+***
 
 ### Virtualization/Sandbox Evasion(虚拟机/沙盒规避)(All)
 >[原文链接](https://attack.mitre.org/techniques/T1497/)
